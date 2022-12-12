@@ -1,0 +1,20 @@
+{
+  "item.katanamod.iron_katana": "Iron Katana",
+  "item.katanamod.diamond_katana": "Diamond-inlaid Katana - Level %d",
+  "item.katanamod.diamond_soulgem": "Diamond Soulgem - Level %d",
+  "item.katanamod.soulgem_item.tooltip_line_1": "A stone enhanced by souls trapped inside of it.",
+  "item.katanamod.katana_item.tooltip_line_1": "Hits harder than a sword, but breaks faster.",
+  "item.katanamod.diamond_katana.tooltip.soulgem": "Inlaid with diamond soulgem.",
+  "item.katanamod.diamond_katana.tooltip.element": "Has magical properties of air and sky.",
+  "item.katanamod.tooltip_souls": "Souls: %d / %d",
+  "item.katanamod.tooltip_level": "Level: %d",
+  "item.katanamod.tooltip_display_more_info": "Press Shift for detailed information.",
+  "item.katanamod.diamond_katana.element_description": "Element: Air and Sky",
+  "item.katanamod.diamond_katana.ability_1.level_1.name": "Swiftness",
+  "item.katanamod.diamond_katana.ability_1.level_1.description": "* Gain Swiftness effect while held in hand.",
+  "item.katanamod.diamond_katana.ability_1.level_2.name": "Swiftness II",
+  "item.katanamod.diamond_katana.ability_1.level_2.description": "* Gain Swiftness II effect while held in hand.",
+  "item.katanamod.diamond_katana.ability_2.level_1.name": "Skybound",
+  "item.katanamod.diamond_katana.ability_2.level_1.description_line_1": "* Every 7th attack gain Jump boost effect for",
+  "item.katanamod.diamond_katana.ability_2.level_1.description_line_2": "  5 seconds and throws target and self to the sky."
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "addition": {
+    "item": "katanamod:iron_katana"
+  },
+  "base": {
+    "item": "minecraft:diamond"
+  },
+  "result": {
+    "item": "katanamod:diamond_katana"
+  }
+}

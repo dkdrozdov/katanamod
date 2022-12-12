@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.falanero.katanamod.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "OnKilledByMixin", "PlayerEntityTickMixin"
+  ],
+  "client": [
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
