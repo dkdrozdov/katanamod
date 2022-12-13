@@ -17,8 +17,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Objects;
 
-import static com.falanero.katanamod.KatanaModInitializer.MODID;
 import static com.falanero.katanamod.util.Souls.*;
 
 public class KatanaItem extends SwordItem {
@@ -44,8 +44,8 @@ public class KatanaItem extends SwordItem {
     {
         ItemStack stack = entity.getStackInHand(Hand.MAIN_HAND);
         if(!entity.world.isClient() && (stack.getItem() instanceof KatanaItem)){
-            ItemStack droppedStack = entity.dropItem(droppedMaterial, 2).getStack();
-            ItemStack ironSwordStack = entity.dropItem(Items.IRON_SWORD, 1).getStack();
+            ItemStack droppedStack = Objects.requireNonNull(entity.dropItem(droppedMaterial, 2)).getStack();
+            ItemStack ironSwordStack = Objects.requireNonNull(entity.dropItem(Items.IRON_SWORD, 1)).getStack();
             ironSwordStack.setDamage((int)(ironSwordStack.getMaxDamage()*0.7));
 
             if(preserveNbt){

@@ -19,7 +19,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.falanero.katanamod.KatanaModInitializer"
+      "com.falanero.katanamod.KatanaMod"
     ]
   },
   "mixins": [

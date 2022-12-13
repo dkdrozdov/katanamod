@@ -1,10 +1,9 @@
 package com.falanero.katanamod.util;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 
-import static com.falanero.katanamod.KatanaModInitializer.MODID;
+import static com.falanero.katanamod.KatanaMod.MOD_ID;
 
 public class Nbt {
     private static final String SOUL_COUNT_NBT = "soul_count";
@@ -14,7 +13,7 @@ public class Nbt {
         if(!stack.hasNbt()){
             stack.setNbt(new NbtCompound());
         }
-        return stack.getOrCreateSubNbt(MODID);
+        return stack.getOrCreateSubNbt(MOD_ID);
     }
 
     static private int getNbt(ItemStack stack, String nbtName){
@@ -32,7 +31,7 @@ public class Nbt {
     }
 
     static private void setNbt(ItemStack stack, String nbtName, int value) {
-        stack.getOrCreateSubNbt(MODID).putInt(nbtName, value);
+        stack.getOrCreateSubNbt(MOD_ID).putInt(nbtName, value);
     }
 
     static public int getSoulCount(ItemStack stack){

@@ -3,7 +3,7 @@
   "item.katanamod.diamond_katana": "Diamond-inlaid Katana - Level %d",
   "item.katanamod.diamond_soulgem": "Diamond Soulgem - Level %d",
   "item.katanamod.soulgem_item.tooltip_line_1": "A stone enhanced by souls trapped inside of it.",
-  "item.katanamod.katana_item.tooltip_line_1": "Hits harder than a sword, but breaks faster.",
+  "item.katanamod.katana_item.tooltip_line_1": "Hits harder than a sword, though slower and less durable.",
   "item.katanamod.diamond_katana.tooltip.soulgem": "Inlaid with diamond soulgem.",
   "item.katanamod.diamond_katana.tooltip.element": "Has magical properties of air and sky.",
   "item.katanamod.tooltip_souls": "Souls: %d / %d",

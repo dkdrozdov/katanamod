@@ -8,12 +8,12 @@ import com.falanero.katanamod.item.soulgem.DiamondSoulgemItem;
 public class Instances {
     public static final KatanaItem IRON_KATANA = new IronKatanaItem(
             4,
-            -2.4f,
+            -2.9f,
             Settings.IRON_KATANA);
 
     public static final DiamondKatanaItem DIAMOND_KATANA = new DiamondKatanaItem(
             4,
-            -2.4f,
+            -2.9f,
             Settings.DIAMOND_KATANA);
 
     public static final DiamondSoulgemItem DIAMOND_SOULGEM = new DiamondSoulgemItem(

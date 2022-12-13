@@ -1,15 +1,16 @@
 package com.falanero.katanamod.item.katana;
 
+import com.falanero.katanamod.KatanaMod;
+import com.falanero.katanamod.callback.OnAttackCallback;
 import com.falanero.katanamod.callback.OnKilledByCallback;
 import com.falanero.katanamod.callback.PlayerEntityTickCallback;
 import com.falanero.katanamod.callback.ToolBreakCallback;
 import com.falanero.katanamod.registry.RegistryRecords;
 import com.falanero.katanamod.util.Nbt;
 import com.falanero.katanamod.util.Souls;
-import com.falanero.katanamod.util.Tooltip;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -17,12 +18,13 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Style;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Pair;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -39,6 +41,44 @@ public class DiamondKatanaItem extends KatanaItem {
         });
         OnKilledByCallback.EVENT.register(this::onKilledEntity);
         PlayerEntityTickCallback.EVENT.register(this::updateEffect);
+        OnAttackCallback.ON_SWEEPING_ATTACK_CALLBACK_EVENT.register(this::SweepingAttack);
+        OnAttackCallback.ON_CRIT_ATTACK_CALLBACK_EVENT.register(this::CritAttack);
+        OnAttackCallback.ON_SPRINT_ATTACK_CALLBACK_EVENT.register(this::SprintAttack);
+    }
+
+    private void SweepingAttack(Entity target, PlayerEntity player){
+        if(player == null)
+            return;
+        ItemStack stack = player.getMainHandStack();
+        if((stack.getItem() instanceof DiamondKatanaItem) && !player.world.isClient)
+        {
+            KatanaMod.LOGGER.info("It's a sweep attack!!!");
+        }
+    }
+    private void CritAttack(Entity target, PlayerEntity player){
+        if(player == null)
+            return;
+        ItemStack stack = player.getMainHandStack();
+        if((stack.getItem() instanceof DiamondKatanaItem) && !player.world.isClient) {
+            KatanaMod.LOGGER.info("It's a crit attack!!!");
+        }
+    }
+    private void SprintAttack(Entity target, PlayerEntity player){
+        if(player == null)
+            return;
+        ItemStack stack = player.getMainHandStack();
+        if((stack.getItem() instanceof DiamondKatanaItem) && !player.world.isClient) {
+            KatanaMod.LOGGER.info("It's a sprint attack!!!");
+        }
+    }
+
+    @Override
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        ItemStack itemStack = user.getStackInHand(hand);
+        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_ENDER_PEARL_THROW, SoundCategory.NEUTRAL, 0.5f, 0.4f / (world.getRandom().nextFloat() * 0.4f + 0.8f));
+        user.getItemCooldownManager().set(this, 20*5);
+
+        return TypedActionResult.success(itemStack, world.isClient());
     }
 
     private void swiftnessEffectUpdate(PlayerEntity player, ItemStack stack, int level){

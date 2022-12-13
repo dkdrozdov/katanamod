@@ -8,5 +8,5 @@ public enum RegistryRecords {
     DIAMOND_SOULGEM(new RegistryRecord(Registry.ITEM, ItemIDs.DIAMOND_SOULGEM, Settings.DIAMOND_SOULGEM, Instances.DIAMOND_SOULGEM));
     RegistryRecords(RegistryRecord rec){ this.record = rec; }
 
-    public RegistryRecord record;
+    final public RegistryRecord record;
 }
