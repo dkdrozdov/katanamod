@@ -1,8 +1,9 @@
 package com.falanero.katanamod.util;
 
+import com.falanero.katanamod.util.Ability.Diamond.SkyboundDiamondAbility;
+import com.falanero.katanamod.util.Ability.Diamond.SwiftnessDiamondAbility;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Pair;
 
 import java.util.List;
@@ -48,21 +49,8 @@ public class Souls {
         int level = getCurrentLevel(Nbt.getSoulCount(stack));
 
         tooltip.add(Text.translatable("item.katanamod.diamond_katana.element_description"));
-        switch (level){
-            case 1:
-                tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability_1.level_1.name").formatted(Formatting.BOLD));
-                tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability_1.level_1.description"));
-                break;
-            case 2:
-                tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability_1.level_2.name").formatted(Formatting.BOLD));
-                tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability_1.level_2.description"));
-                tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability_2.level_1.name").formatted(Formatting.BOLD));
-                tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability_2.level_1.description_line_1"));
-                tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability_2.level_1.description_line_2"));
-
-            default:
-                break;
-        }
+        SkyboundDiamondAbility.appendTooltip(level, tooltip);
+        SwiftnessDiamondAbility.appendTooltip(level, tooltip);
     }
 
     static public void appendTooltipLevel(ItemStack stack, List<Text> tooltip){

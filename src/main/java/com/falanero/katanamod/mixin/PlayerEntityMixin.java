@@ -1,16 +1,23 @@
 package com.falanero.katanamod.mixin;
 
 import com.falanero.katanamod.callback.OnAttackCallback;
+import com.falanero.katanamod.callback.PlayerEntityTickCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(PlayerEntity.class)
-public class OnAttackMixin {
+public class PlayerEntityMixin {
+    @Inject(at = @At("TAIL"), method = "tick")
+    private void onPlayerEntityTick(CallbackInfo info){
+        PlayerEntityTickCallback.EVENT.invoker().notify((PlayerEntity)(Object)this);
+    }
 
-//    @Inject(method = "attack",
+    //    @Inject(method = "attack",
 //            at = @At(value = "HEAD"),
 //            locals = LocalCapture.CAPTURE_FAILHARD)
 //    private void OnAttackInject(Entity target, CallbackInfo ci) {
@@ -45,4 +52,5 @@ public class OnAttackMixin {
             OnAttackCallback.ON_SPRINT_ATTACK_CALLBACK_EVENT.invoker().notify(target, ((PlayerEntity)(Object)this));
         }
     }
+
 }

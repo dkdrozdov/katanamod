@@ -6,15 +6,14 @@ import com.falanero.katanamod.callback.OnKilledByCallback;
 import com.falanero.katanamod.callback.PlayerEntityTickCallback;
 import com.falanero.katanamod.callback.ToolBreakCallback;
 import com.falanero.katanamod.registry.RegistryRecords;
+import com.falanero.katanamod.util.Ability.Diamond.SkyboundDiamondAbility;
+import com.falanero.katanamod.util.Ability.Diamond.SwiftnessDiamondAbility;
 import com.falanero.katanamod.util.Nbt;
 import com.falanero.katanamod.util.Souls;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,23 +29,17 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class DiamondKatanaItem extends KatanaItem {
-    static final int SPEED_MAX_AMPLIFIER = 5;
-    static final int JUMP_BOOST_MAX_AMPLIFIER = 5;
-    static final int HIT_COUNT_TRIGGER_LEVEL_1 = 7;
-
     public DiamondKatanaItem(int attackDamage, float attackSpeed, Settings settings) {
         super(attackDamage, attackSpeed, settings);
-        ToolBreakCallback.EVENT.register((entity) -> {
-            onKatanaBreak(entity, (Item)RegistryRecords.DIAMOND_SOULGEM.record.instance(), true);
-        });
+        ToolBreakCallback.EVENT.register((entity) -> onKatanaBreak(entity, (Item)RegistryRecords.DIAMOND_SOULGEM.record.instance(), true));
         OnKilledByCallback.EVENT.register(this::onKilledEntity);
         PlayerEntityTickCallback.EVENT.register(this::updateEffect);
-        OnAttackCallback.ON_SWEEPING_ATTACK_CALLBACK_EVENT.register(this::SweepingAttack);
-        OnAttackCallback.ON_CRIT_ATTACK_CALLBACK_EVENT.register(this::CritAttack);
-        OnAttackCallback.ON_SPRINT_ATTACK_CALLBACK_EVENT.register(this::SprintAttack);
+        OnAttackCallback.ON_SWEEPING_ATTACK_CALLBACK_EVENT.register(this::sweepingAttack);
+        OnAttackCallback.ON_CRIT_ATTACK_CALLBACK_EVENT.register(this::critAttack);
+        OnAttackCallback.ON_SPRINT_ATTACK_CALLBACK_EVENT.register(this::sprintAttack);
     }
 
-    private void SweepingAttack(Entity target, PlayerEntity player){
+    private void sweepingAttack(Entity target, PlayerEntity player){
         if(player == null)
             return;
         ItemStack stack = player.getMainHandStack();
@@ -55,7 +48,7 @@ public class DiamondKatanaItem extends KatanaItem {
             KatanaMod.LOGGER.info("It's a sweep attack!!!");
         }
     }
-    private void CritAttack(Entity target, PlayerEntity player){
+    private void critAttack(Entity target, PlayerEntity player){
         if(player == null)
             return;
         ItemStack stack = player.getMainHandStack();
@@ -63,7 +56,7 @@ public class DiamondKatanaItem extends KatanaItem {
             KatanaMod.LOGGER.info("It's a crit attack!!!");
         }
     }
-    private void SprintAttack(Entity target, PlayerEntity player){
+    private void sprintAttack(Entity target, PlayerEntity player){
         if(player == null)
             return;
         ItemStack stack = player.getMainHandStack();
@@ -81,63 +74,13 @@ public class DiamondKatanaItem extends KatanaItem {
         return TypedActionResult.success(itemStack, world.isClient());
     }
 
-    private void swiftnessEffectUpdate(PlayerEntity player, ItemStack stack, int level){
-        if((player == null) || (stack == null))
-            return;
-        int speedAmplifier = Math.min(level-1, SPEED_MAX_AMPLIFIER);
-        player.addStatusEffect(new StatusEffectInstance(
-                StatusEffects.SPEED,
-                1,
-                speedAmplifier,
-                false,
-                false,
-                true));
-    }
-
-    private boolean hitCountAbilityTriggered(int level, int hitCount){
-        int currentHitCountTrigger;
-        switch (level){
-            case 1:
-            default:
-                currentHitCountTrigger = HIT_COUNT_TRIGGER_LEVEL_1;
-        }
-        return hitCount >= currentHitCountTrigger;
-    }
-
-    private void skyboundAbilityTrigger(ItemStack stack, LivingEntity target, LivingEntity player, int level){
-        if(level>=2 && !player.world.isClient){   //TODO: Katana level to ability level
-            int jumpBoostAmplifier = Math.min(level-1-1, JUMP_BOOST_MAX_AMPLIFIER);
-            player.addStatusEffect(new StatusEffectInstance(
-                    StatusEffects.JUMP_BOOST,
-                    (5+(int)(level*0.75))*20,
-                    jumpBoostAmplifier));
-
-            double knockbackResistance;
-            knockbackResistance = Math.max(0.0, 1.0 - target.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE));
-            target.setVelocity(target.getVelocity().add(
-                    0.0,
-                    (0.30 + (float)(level-1)/5f) * knockbackResistance,
-                    0.0));
-            player.setVelocity(player.getVelocity().add(
-                    0.0,
-                    target.getVelocity().y-player.getVelocity().y,
-                    0.0));
-            player.velocityModified = true;
-        }
-    }
-
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if((target == null) || (attacker == null) || (stack == null))
             return false;
 
-        int hitCount = Nbt.getHitCount(stack)+1;
         int level = Souls.getCurrentLevel(Nbt.getSoulCount(stack));
-        if (hitCountAbilityTriggered(level, hitCount)){
-            hitCount = 0;
-            skyboundAbilityTrigger(stack, target, attacker, level);
-        }
-        Nbt.setHitCount(stack, hitCount);
+        SkyboundDiamondAbility.tryApply(stack, target, attacker, level);
         return super.postHit(stack, target, attacker);
     }
 
@@ -145,10 +88,14 @@ public class DiamondKatanaItem extends KatanaItem {
     protected void updateEffect(PlayerEntity player) {
         if(player == null)
             return;
+
         ItemStack stack = player.getMainHandStack();
-        if((stack.getItem() instanceof DiamondKatanaItem) && !player.world.isClient) {
+        if(stack == null)
+            return;
+
+        if((stack.getItem() instanceof DiamondKatanaItem)) {
             int level = Souls.getCurrentLevel(Nbt.getSoulCount(stack));
-            swiftnessEffectUpdate(player, stack, level);
+            SwiftnessDiamondAbility.effectTick(player, level);
         }
     }
 
@@ -178,7 +125,7 @@ public class DiamondKatanaItem extends KatanaItem {
     @Override
     public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
         if(Screen.hasShiftDown()){
-            appendTooltipExtra(new Pair(itemStack, tooltip));
+            appendTooltipExtra(new Pair<>(itemStack, tooltip));
         }else{
             //Katana description
             super.appendTooltip(itemStack, world, tooltip, tooltipContext);
