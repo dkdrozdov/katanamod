@@ -1,4 +1,4 @@
-package com.falanero.katanamod.util.Ability.Diamond;
+package com.falanero.katanamod.util.ability.diamond;
 
 import com.falanero.katanamod.mixin.LivingEntityInvoker;
 import com.falanero.katanamod.util.Nbt;
@@ -64,14 +64,8 @@ public class SkyboundDiamondAbility {
 
             knockbackResistance = Math.max(0.0, 1.0 - target.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE));
             double throwVelocity = ((1+getThrowHeight(abilityLevel)) * ((LivingEntityInvoker)target).invokeGetJumpVelocity() * Math.min(knockbackResistance, 0.25));
-            target.setVelocity(target.getVelocity().add(
-                    0.0,
-                    throwVelocity,
-                    0.0));
-            player.setVelocity(player.getVelocity().add(
-                    0.0,
-                    target.getVelocity().y-player.getVelocity().y,
-                    0.0));
+            target.setVelocity(0.0, throwVelocity, 0.0);
+            player.setVelocity(0.0, throwVelocity, 0.0);
             player.velocityModified = true;
         }
     }

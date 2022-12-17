@@ -1,7 +1,7 @@
 package com.falanero.katanamod.util;
 
-import com.falanero.katanamod.util.Ability.Diamond.SkyboundDiamondAbility;
-import com.falanero.katanamod.util.Ability.Diamond.SwiftnessDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.SkyboundDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.SwiftnessDiamondAbility;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
