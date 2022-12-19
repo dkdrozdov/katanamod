@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "com.falanero.katanamod.KatanaMod"
+    ],
+    "client": [
+      "com.falanero.katanamod.client.KatanaModClient"
     ]
   },
   "mixins": [

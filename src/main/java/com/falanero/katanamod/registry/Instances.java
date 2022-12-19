@@ -24,6 +24,7 @@ public class Instances {
     public static final DiamondSoulgemItem DIAMOND_SOULGEM = new DiamondSoulgemItem(
             Settings.DIAMOND_SOULGEM);
 
-    public static final EntityType<FeatherbladeEntity> FEATHERBLADE =
-            FabricEntityTypeBuilder.create(SpawnGroup.MISC, FeatherbladeEntity::new).dimensions(EntityDimensions.fixed(0.25f, 0.25f)).trackRangeBlocks(4).trackedUpdateRate(10).build();
+    public static final EntityType<FeatherbladeEntity> FEATHERBLADE_ENTITY =
+            FabricEntityTypeBuilder.<FeatherbladeEntity>create(SpawnGroup.MISC, FeatherbladeEntity::new).dimensions(EntityDimensions.fixed(0.25f, 0.25f)).trackRangeBlocks(4).trackedUpdateRate(10).build();
+
 }

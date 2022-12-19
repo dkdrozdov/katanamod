@@ -1,13 +1,14 @@
 package com.falanero.katanamod.entity;
 
+import com.falanero.katanamod.registry.Instances;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.EndermiteEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -17,16 +18,24 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import static net.minecraft.item.Items.FEATHER;
+
 public class FeatherbladeEntity
 extends ThrownItemEntity {
     public FeatherbladeEntity(EntityType<? extends ThrownItemEntity> entityType, World world) {
         super(entityType, world);
     }
+    public FeatherbladeEntity(World world, LivingEntity owner) {
+        super(Instances.FEATHERBLADE_ENTITY, owner, world);
+    }
 
+    public FeatherbladeEntity(World world, double x, double y, double z) {
+        super(Instances.FEATHERBLADE_ENTITY, x, y, z, world);
+    }
 
     @Override
     protected Item getDefaultItem() {
-        return Items.ENDER_PEARL;
+        return FEATHER;
     }
 
     @Override
