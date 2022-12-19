@@ -8,6 +8,7 @@ public class RegistryEntries extends ArrayList<RegistryEntry<?, ?>> {
         this.add(new RegistryEntry<>(MinecraftRegistries.IRON_KATANA, IDs.IRON_KATANA, Instances.IRON_KATANA));
         this.add(new RegistryEntry<>(MinecraftRegistries.DIAMOND_KATANA, IDs.DIAMOND_KATANA, Instances.DIAMOND_KATANA));
         this.add(new RegistryEntry<>(MinecraftRegistries.DIAMOND_SOULGEM, IDs.DIAMOND_SOULGEM, Instances.DIAMOND_SOULGEM));
-        this.add(new RegistryEntry<>(MinecraftRegistries.FEATHERBLADE, IDs.FEATHERBLADE, Instances.FEATHERBLADE));
+        this.add(new RegistryEntry<>(MinecraftRegistries.FEATHERBLADE_ENTITY, IDs.FEATHERBLADE_ENTITY, Instances.FEATHERBLADE_ENTITY));
+        this.add(new RegistryEntry<>(MinecraftRegistries.FEATHERBLADE_ITEM, IDs.FEATHERBLADE_ITEM, Instances.FEATHERBLADE_ITEM));
     }
 }

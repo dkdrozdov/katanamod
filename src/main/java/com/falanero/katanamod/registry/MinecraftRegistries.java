@@ -8,5 +8,6 @@ public class MinecraftRegistries {
     public static final Registry<Item> IRON_KATANA = Registry.ITEM;
     public static final Registry<Item> DIAMOND_KATANA = Registry.ITEM;
     public static final Registry<Item> DIAMOND_SOULGEM = Registry.ITEM;
-    public static final Registry<EntityType<?>> FEATHERBLADE = Registry.ENTITY_TYPE;
+    public static final Registry<EntityType<?>> FEATHERBLADE_ENTITY = Registry.ENTITY_TYPE;
+    public static final Registry<Item> FEATHERBLADE_ITEM = Registry.ITEM;
 }

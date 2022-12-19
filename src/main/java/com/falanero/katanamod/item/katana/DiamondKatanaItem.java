@@ -2,6 +2,7 @@ package com.falanero.katanamod.item.katana;
 
 import com.falanero.katanamod.KatanaMod;
 import com.falanero.katanamod.callback.*;
+import com.falanero.katanamod.entity.FeatherbladeEntity;
 import com.falanero.katanamod.registry.Instances;
 import com.falanero.katanamod.util.ability.diamond.SkyboundDiamondAbility;
 import com.falanero.katanamod.util.ability.diamond.SwiftnessDiamondAbility;
@@ -16,9 +17,11 @@ import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.math.Box;
@@ -27,6 +30,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.List;
+
+import static net.minecraft.item.Items.FEATHER;
+import static net.minecraft.item.Items.PHANTOM_MEMBRANE;
 
 public class DiamondKatanaItem extends KatanaItem {
     public DiamondKatanaItem(int attackDamage, float attackSpeed, Settings settings) {
@@ -40,49 +46,80 @@ public class DiamondKatanaItem extends KatanaItem {
         OnItemUseCallback.ON_ITEM_USE_CALLBACK.register(this::onItemUse);
         OnGetAirStrafingSpeedCallback.ON_GET_AIR_STRAFING_SPEED_CALLBACK_EVENT.register(SwiftnessDiamondAbility::onGetAirStrafingSpeed);
     }
+    private void windbombAbilityApply(World world, PlayerEntity user){
+
+        Vec3d pos = user.getPos().add(0, -4, 0);
+        float power = 10.0f;
+
+        float radius = power * 2.0f;
+        int x1 = MathHelper.floor(pos.x - (double)radius - 1.0);
+        int x2 = MathHelper.floor(pos.x + (double)radius + 1.0);
+        int y1 = MathHelper.floor(pos.y - (double)radius - 1.0);
+        int y2 = MathHelper.floor(pos.y + (double)radius + 1.0);
+        int z1 = MathHelper.floor(pos.z - (double)radius - 1.0);
+        int z2 = MathHelper.floor(pos.z + (double)radius + 1.0);
+        List<Entity> list = world.getOtherEntities(null, new Box(x1, y1, z1, x2, y2, z2));
+
+        for (Entity entity : list) {
+            double dx = entity.getX() - pos.x;
+            double dy = (entity instanceof TntEntity ? entity.getY() : entity.getEyeY()) - pos.y;
+            double dz = entity.getZ() - pos.z;
+            double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            double normalDistance = distance / (double) radius;
+            if (entity.isImmuneToExplosion() || !(normalDistance <= 1.0) || distance == 0.0)
+                continue;
+            double normalDx = dx/distance;
+            double normalDy = dy/distance;
+            double normalDz = dz/distance;
+            double velocityMultiplier = (1.0 - normalDistance);
+            if (entity instanceof LivingEntity) {
+                velocityMultiplier = ProtectionEnchantment.transformExplosionKnockback((LivingEntity) entity, velocityMultiplier);
+            }
+            entity.setVelocity(
+                    entity.getVelocity().x + normalDx * velocityMultiplier,
+                    normalDy * velocityMultiplier,
+                    entity.getVelocity().z + normalDz * velocityMultiplier);
+        }
+
+        if(world.isClient){
+            world.playSound(pos.x, pos.y, pos.z, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0f, (1.0f + (world.random.nextFloat() - world.random.nextFloat()) * 0.2f) * 0.7f, false);
+        }
+        world.addParticle(ParticleTypes.EXPLOSION, pos.x, pos.y, pos.z, 1.0, 0.0, 0.0);
+    }
+
+    private void featherbladeAbilityApply(World world, PlayerEntity user, Hand hand){
+        ItemStack itemStack = user.getStackInHand(hand);
+        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 1F); // plays a globalSoundEvent
+
+		user.getItemCooldownManager().set(this, 5);
+
+        if (!world.isClient) {
+            FeatherbladeEntity featherbladeEntity = new FeatherbladeEntity(world, user);
+            featherbladeEntity.setItem(itemStack);
+            featherbladeEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 1.5F, 0F);
+            world.spawnEntity(featherbladeEntity);
+        }
+
+        user.incrementStat(Stats.USED.getOrCreateStat(this));
+        if (!user.getAbilities().creativeMode) {
+            itemStack.decrement(1); // decrements itemStack if user is not in creative mode
+        }
+    }
 
     private ActionResult onItemUse(World world, PlayerEntity user, Hand hand){
         KatanaMod.LOGGER.info((user.world.isClient()?"CLIENT":"SERVER") + " " + hand.toString() + user.getStackInHand(hand).getItem().getName());
         Hand otherHand = hand == Hand.MAIN_HAND?Hand.OFF_HAND:Hand.MAIN_HAND;
-        if(user.getStackInHand(otherHand).getItem() instanceof DiamondKatanaItem){
-            Vec3d pos = user.getPos().add(0, -4, 0);
-                float power = 10.0f;
-
-                float radius = power * 2.0f;
-                int x1 = MathHelper.floor(pos.x - (double)radius - 1.0);
-                int x2 = MathHelper.floor(pos.x + (double)radius + 1.0);
-                int y1 = MathHelper.floor(pos.y - (double)radius - 1.0);
-                int y2 = MathHelper.floor(pos.y + (double)radius + 1.0);
-                int z1 = MathHelper.floor(pos.z - (double)radius - 1.0);
-                int z2 = MathHelper.floor(pos.z + (double)radius + 1.0);
-                List<Entity> list = world.getOtherEntities(null, new Box(x1, y1, z1, x2, y2, z2));
-
-                for (Entity entity : list) {
-                    double dx = entity.getX() - pos.x;
-                    double dy = (entity instanceof TntEntity ? entity.getY() : entity.getEyeY()) - pos.y;
-                    double dz = entity.getZ() - pos.z;
-                    double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                    double normalDistance = distance / (double) radius;
-                    if (entity.isImmuneToExplosion() || !(normalDistance <= 1.0) || distance == 0.0)
-                        continue;
-                    double normalDx = dx/distance;
-                    double normalDy = dy/distance;
-                    double normalDz = dz/distance;
-                    double velocityMultiplier = (1.0 - normalDistance);
-                    if (entity instanceof LivingEntity) {
-                        velocityMultiplier = ProtectionEnchantment.transformExplosionKnockback((LivingEntity) entity, velocityMultiplier);
-                    }
-                    entity.setVelocity(
-                            entity.getVelocity().x + normalDx * velocityMultiplier,
-                            normalDy * velocityMultiplier,
-                            entity.getVelocity().z + normalDz * velocityMultiplier);
-                }
-
-            if(world.isClient){
-                world.playSound(pos.x, pos.y, pos.z, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0f, (1.0f + (world.random.nextFloat() - world.random.nextFloat()) * 0.2f) * 0.7f, false);
+        Item otherItem = user.getStackInHand(otherHand).getItem();
+        Item item = user.getStackInHand(hand).getItem();
+        if(otherItem instanceof DiamondKatanaItem){
+            if(item == PHANTOM_MEMBRANE) {
+                windbombAbilityApply(world, user);
+                return ActionResult.CONSUME;
             }
-            world.addParticle(ParticleTypes.EXPLOSION, pos.x, pos.y, pos.z, 1.0, 0.0, 0.0);
-            return ActionResult.CONSUME;
+            if(item == FEATHER) {
+                featherbladeAbilityApply(world, user, hand);
+                return ActionResult.CONSUME;
+            }
         }
         return ActionResult.PASS;
     }
