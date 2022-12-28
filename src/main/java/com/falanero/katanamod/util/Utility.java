@@ -5,11 +5,12 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 
 public class Utility {
-    static public Hand GetHandByEquipmentSlot(EquipmentSlot slot){
+    static public Hand getHandByEquipmentSlot(EquipmentSlot slot){
         if(slot.getType() != EquipmentSlot.Type.HAND)
             return null;
         return slot == EquipmentSlot.MAINHAND ? Hand.MAIN_HAND : Hand.OFF_HAND;
     }
+
 
     /**
      *

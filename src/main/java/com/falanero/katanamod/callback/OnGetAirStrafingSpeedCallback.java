@@ -13,7 +13,6 @@ public interface OnGetAirStrafingSpeedCallback {
                     TypedActionResult<Float> current = listener.intercept(airStrafingSpeed, entity);
                     if(current.getResult() != ActionResult.PASS)
                         return current;
-
                 }
                 return new TypedActionResult<>(ActionResult.PASS, airStrafingSpeed);
             });

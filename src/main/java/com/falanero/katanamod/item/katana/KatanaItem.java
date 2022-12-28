@@ -58,14 +58,15 @@ public class KatanaItem extends SwordItem {
         }
     }
 
-    protected void onKilledEntity(LivingEntity adversary){
-        ItemStack stack = adversary.getStackInHand(Hand.MAIN_HAND);
-        if((stack.getItem() instanceof KatanaItem) && !adversary.world.isClient) {
+    protected void onKilledEntity(LivingEntity killer){
+        ItemStack stack = killer.getStackInHand(Hand.MAIN_HAND);
+        if((stack.getItem() instanceof KatanaItem) && !killer.world.isClient) {
             int soulCount = Nbt.getSoulCount(stack) + 1;
             int level = getCurrentLevel(soulCount);
             Nbt.setSoulCount(stack, soulCount);
-            ServerPlayerEntity player = adversary.getServer().getPlayerManager().getPlayer(adversary.getUuid());
-            player.sendMessage(Text.translatable("item.katanamod.tooltip_souls",
+            ServerPlayerEntity serverPlayerEntity = Objects.requireNonNull(killer.getServer()).getPlayerManager().getPlayer(killer.getUuid());
+            assert serverPlayerEntity != null;
+            serverPlayerEntity.sendMessage(Text.translatable("item.katanamod.tooltip_souls",
                     soulCount - getSoulsForLevel(level), Souls.getSoulsNeeded(level+1)), true);
         }
     }

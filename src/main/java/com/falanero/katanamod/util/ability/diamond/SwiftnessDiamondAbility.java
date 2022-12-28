@@ -1,8 +1,5 @@
 package com.falanero.katanamod.util.ability.diamond;
 
-import com.falanero.katanamod.item.katana.DiamondKatanaItem;
-import com.falanero.katanamod.util.Nbt;
-import com.falanero.katanamod.util.Souls;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -11,6 +8,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
 
@@ -31,14 +29,23 @@ public class SwiftnessDiamondAbility {
         tooltip.add(Text.translatable("item.katanamod.diamond_katana.swiftness.description", toRoman(abilityLevel)));
     }
 
-    public static TypedActionResult<Float> onGetAirStrafingSpeed(float airStrafingSpeed, LivingEntity entity) {
-        if (entity instanceof PlayerEntity player && player.getMainHandStack().getItem() instanceof DiamondKatanaItem){
-        int abilityLevel = getLevel(Souls.getCurrentLevel(Nbt.getSoulCount(player.getMainHandStack())));
-            if(abilityLevel<1)
+    public static TypedActionResult<Float> onGetAirStrafingSpeed(float airStrafingSpeed, PlayerEntity player, int itemLevel) {
+            int abilityLevel = getLevel(itemLevel);
+            if (abilityLevel < 1)
                 return new TypedActionResult<>(ActionResult.FAIL, airStrafingSpeed);
-            return new TypedActionResult<>(ActionResult.SUCCESS,  Math.max (player.getMovementSpeed()/8.328f, airStrafingSpeed));
+            return new TypedActionResult<>(ActionResult.SUCCESS, Math.max(player.getMovementSpeed() / 8.328f, airStrafingSpeed));
+    }
+
+    public static TypedActionResult<Integer> onComputeFallDamage(int fallDamage, float fallDistance, float damageMultiplier, LivingEntity entity, int itemLevel) {
+        int abilityLevel = getLevel(itemLevel);
+        if (abilityLevel < 1)
+            return new TypedActionResult<>(ActionResult.FAIL, fallDamage);
+        if(entity.isSneaking()){
+            int rawDamage = MathHelper.ceil((fallDistance - 3.0f) * damageMultiplier);
+            float reductionFactor = 1f - (4 + 7 * (float)abilityLevel)/100f;
+            return new TypedActionResult<>(ActionResult.SUCCESS, Math.min((int) Math.floor(rawDamage * reductionFactor), fallDamage));
         }
-        return new TypedActionResult<>(ActionResult.FAIL, airStrafingSpeed);
+        return new TypedActionResult<>(ActionResult.FAIL, fallDamage);
     }
 
     public static void effectTick(PlayerEntity player, int itemLevel) {
@@ -63,13 +70,8 @@ public class SwiftnessDiamondAbility {
             if (player.isSneaking()) {
                 int effectLevel;
                 int effectTickTime;
-                if (player.isOnGround()) {
-                    effectLevel = (abilityLevel-1)/2;
-                    effectTickTime = 10;
-                } else {
-                    effectLevel = (abilityLevel) * 2 - 1;
-                    effectTickTime = 2;
-                }
+                effectLevel = (abilityLevel - 1) / 2;
+                effectTickTime = 10;
 
                 player.addStatusEffect(new StatusEffectInstance(
                         StatusEffects.JUMP_BOOST,
