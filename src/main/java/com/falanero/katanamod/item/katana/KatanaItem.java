@@ -1,8 +1,11 @@
 package com.falanero.katanamod.item.katana;
 
+import com.falanero.katanamod.callback.OnItemUseCallback;
 import com.falanero.katanamod.callback.ToolBreakCallback;
 import com.falanero.katanamod.util.Nbt;
 import com.falanero.katanamod.util.Souls;
+import com.falanero.katanamod.util.ability.Ability;
+import com.falanero.katanamod.util.ability.ConsumableAbility;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EquipmentSlot;
@@ -12,19 +15,21 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.falanero.katanamod.util.Souls.*;
 
-public class KatanaItem extends SwordItem {
+public abstract class KatanaItem extends SwordItem {
 
     public KatanaItem(int attackDamage, float attackSpeed, Item.Settings settings) {
         super(ToolMaterials.IRON, attackDamage, attackSpeed, settings);
+
+        registerConsumables();
     }
 
     protected void updateEffect(PlayerEntity player) {
@@ -56,6 +61,29 @@ public class KatanaItem extends SwordItem {
                 Nbt.setSoulCount(droppedStack, soulCount);
             }
         }
+    }
+
+    /**
+     * @param hand hand to check. If {@code null}, checks both hands.
+     * @return if the entity has this item in the given hand.
+     */
+    public boolean isHeldBy(LivingEntity entity, Hand hand) {
+        if (hand == null)
+            return (entity.getMainHandStack().getItem().getClass() == getClass())||
+                    (entity.getOffHandStack().getItem().getClass() == getClass());
+        return entity.getStackInHand(hand).getItem().getClass() == getClass();
+    }
+
+    protected abstract Map<Item, ConsumableAbility> getConsumableAbilities();
+    private void registerConsumables(){
+        OnItemUseCallback.ON_ITEM_USE_CALLBACK.register((world, user, hand) -> {
+            Item usedItem = user.getStackInHand(hand).getItem();
+            ConsumableAbility ability = getConsumableAbilities().get(usedItem);
+            if((ability != null) && (isHeldBy(user, null)))
+                if (ability.apply(world, user, hand))
+                    return ActionResult.CONSUME;
+            return ActionResult.PASS;
+        });
     }
 
     protected void onKilledEntity(LivingEntity killer){

@@ -6,8 +6,11 @@ import com.falanero.katanamod.entity.FeatherbladeEntity;
 import com.falanero.katanamod.registry.Instances;
 import com.falanero.katanamod.util.Nbt;
 import com.falanero.katanamod.util.Souls;
+import com.falanero.katanamod.util.ability.ConsumableAbility;
 import com.falanero.katanamod.util.ability.diamond.SkyboundDiamondAbility;
 import com.falanero.katanamod.util.ability.diamond.SwiftnessDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.consumable.FeatherbladeDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.consumable.WindbombDiamondAbility;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -36,12 +39,18 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static net.minecraft.item.Items.FEATHER;
 import static net.minecraft.item.Items.PHANTOM_MEMBRANE;
 
 public class DiamondKatanaItem extends KatanaItem {
+    private final Map<Item, ConsumableAbility> ConsumableUses = Map.of(
+            PHANTOM_MEMBRANE, new WindbombDiamondAbility(),
+            FEATHER, new FeatherbladeDiamondAbility());
+
     public DiamondKatanaItem(int attackDamage, float attackSpeed, Settings settings) {
         super(attackDamage, attackSpeed, settings);
         ToolBreakCallback.EVENT.register((entity) -> onKatanaBreak(entity, Instances.DIAMOND_SOULGEM, true));
@@ -50,9 +59,13 @@ public class DiamondKatanaItem extends KatanaItem {
         OnAttackCallback.ON_SWEEPING_ATTACK_CALLBACK_EVENT.register(this::sweepingAttack);
         OnAttackCallback.ON_CRIT_ATTACK_CALLBACK_EVENT.register(this::critAttack);
         OnAttackCallback.ON_SPRINT_ATTACK_CALLBACK_EVENT.register(this::sprintAttack);
-        OnItemUseCallback.ON_ITEM_USE_CALLBACK.register(this::onItemUse);
         OnGetAirStrafingSpeedCallback.ON_GET_AIR_STRAFING_SPEED_CALLBACK_EVENT.register(this::onGetAirStrafingSpeed);
         OnComputeFallDamage.ON_COMPUTE_FALL_DAMAGE_CALLBACK_EVENT.register(this::onComputeFallDamage);
+    }
+
+    @Override
+    public Map<Item, ConsumableAbility> getConsumableAbilities() {
+        return ConsumableUses;
     }
 
     private TypedActionResult<Float> onGetAirStrafingSpeed(float airStrafingSpeed, LivingEntity entity) {
@@ -71,105 +84,6 @@ public class DiamondKatanaItem extends KatanaItem {
         return new TypedActionResult<>(ActionResult.FAIL, fallDamage);
     }
 
-    private void windbombAbilityApply(World world, PlayerEntity user, Hand hand) {
-        if (world.isClient)
-            return;
-
-//        boolean sneaking = user.isSneaking();
-
-        ItemStack itemStack = user.getStackInHand(hand);
-        user.getItemCooldownManager().set(itemStack.getItem(), 20 * 3);
-
-        Vec3d pos = user.getPos().add(0, -2.5, 0);
-        float power = 2.0f;
-        float radius = 12.0f;
-        float softness = 1.3f;  // (0, 1] has bell shape, [1, +) has helmet shape
-        int x1 = MathHelper.floor(pos.x - (double) radius - 1.0);
-        int x2 = MathHelper.floor(pos.x + (double) radius + 1.0);
-        int y1 = MathHelper.floor(pos.y - (double) radius - 1.0);
-        int y2 = MathHelper.floor(pos.y + (double) radius + 1.0);
-        int z1 = MathHelper.floor(pos.z - (double) radius - 1.0);
-        int z2 = MathHelper.floor(pos.z + (double) radius + 1.0);
-        List<Entity> list = world.getOtherEntities(null, new Box(x1, y1, z1, x2, y2, z2));
-
-        for (Entity entity : list) {
-            double dx = entity.getX() - pos.x;
-            double dy = entity.getEyeY() - pos.y;
-            double dz = entity.getZ() - pos.z;
-            double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-            if (!entity.isImmuneToExplosion() && !(distance >= radius)) {
-                double velocity = Math.pow((-distance * distance + radius * radius) * Math.pow(power, softness) / (radius * radius), 1 / softness);
-                double knockbackResistance = 1.0;
-
-                if (entity instanceof LivingEntity livingEntity) {
-                    knockbackResistance = Math.max(0.15, 1.0 - livingEntity.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE));
-                    livingEntity.addStatusEffect(new StatusEffectInstance(
-                            StatusEffects.LEVITATION,
-                            (int)(20.0*0.4),
-                            20), user);
-                }
-                velocity *= knockbackResistance;
-
-                if (entity instanceof PlayerEntity playerEntity) {
-                    if (playerEntity == user)
-                        playerEntity.setVelocity(playerEntity.getVelocity().x, power * knockbackResistance, playerEntity.getVelocity().z);
-                    else
-                        playerEntity.setVelocity(playerEntity.getVelocity().x + dx/distance * velocity, dy/distance * velocity, playerEntity.getVelocity().z + dz/distance * velocity);
-                    playerEntity.velocityModified = true;
-                    ((ServerPlayerEntity) playerEntity).networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(playerEntity));
-                    playerEntity.velocityModified = false;
-                } else
-                    entity.setVelocity(entity.getVelocity().x + dx/distance * velocity, dy/distance * velocity, entity.getVelocity().z + dz/distance * velocity);
-                entity.velocityModified = true;
-
-            }
-        }
-        BlockPos targetPos = new BlockPos(pos);
-        PacketByteBuf targetBuf = PacketByteBufs.create();
-        targetBuf.writeBlockPos(targetPos);
-        for (ServerPlayerEntity serverPlayerEntity : PlayerLookup.tracking((ServerWorld) user.world, targetPos)) {
-            ServerPlayNetworking.send(serverPlayerEntity, KatanaMod.WINDBOMB_S2C_PACKET_ID, targetBuf);
-//          KatanaMod.LOGGER.info("{}", serverPlayerEntity.getName().getString());
-        }
-
-    }
-
-    private void featherbladeAbilityApply(World world, PlayerEntity user, Hand hand) {
-        ItemStack itemStack = user.getStackInHand(hand);
-        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 1F); // plays a globalSoundEvent
-
-        user.getItemCooldownManager().set(this, 5);
-
-        if (!world.isClient) {
-            FeatherbladeEntity featherbladeEntity = new FeatherbladeEntity(world, user);
-            featherbladeEntity.setItem(itemStack);
-            featherbladeEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 1.5F, 0F);
-            world.spawnEntity(featherbladeEntity);
-        }
-
-        user.incrementStat(Stats.USED.getOrCreateStat(this));
-        if (!user.getAbilities().creativeMode) {
-            itemStack.decrement(1); // decrements itemStack if user is not in creative mode
-        }
-    }
-
-    private ActionResult onItemUse(World world, PlayerEntity user, Hand hand) {
-        KatanaMod.LOGGER.info((user.world.isClient() ? "CLIENT" : "SERVER") + " " + hand.toString() + user.getStackInHand(hand).getItem().getName());
-        Item item = user.getStackInHand(hand).getItem();
-        if (isHeldBy(user, null)) {
-            if (item == PHANTOM_MEMBRANE) {
-                windbombAbilityApply(world, user, hand);
-                return ActionResult.CONSUME;
-            }
-            if (item == FEATHER) {
-                featherbladeAbilityApply(world, user, hand);
-                return ActionResult.CONSUME;
-            }
-        }
-        return ActionResult.PASS;
-    }
-
     private void sweepingAttack(Entity target, PlayerEntity player) {
         if (player == null)
             return;
@@ -178,20 +92,6 @@ public class DiamondKatanaItem extends KatanaItem {
             KatanaMod.LOGGER.info("It's a sweep attack!!!");
         }
     }
-
-    /**
-     * @param hand hand to check. If {@code null}, checks both hands.
-     * @return if the entity has this item in the given hand.
-     */
-    static public boolean isHeldBy(LivingEntity entity, Hand hand) {
-        if (hand == null)
-            return entity.getMainHandStack().getItem() instanceof DiamondKatanaItem ||
-                    entity.getOffHandStack().getItem() instanceof DiamondKatanaItem;
-        return hand == Hand.MAIN_HAND ?
-                entity.getMainHandStack().getItem() instanceof DiamondKatanaItem :
-                entity.getOffHandStack().getItem() instanceof DiamondKatanaItem;
-    }
-
 
     /**
      * @param hand hand to get stack from. If {@code null}, checks both hands.
@@ -320,5 +220,4 @@ public class DiamondKatanaItem extends KatanaItem {
             tooltip.add(Text.translatable("item.katanamod.tooltip_display_more_info").formatted(Formatting.GRAY));
         }
     }
-
 }
