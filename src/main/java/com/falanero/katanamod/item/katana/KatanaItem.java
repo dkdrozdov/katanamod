@@ -1,13 +1,11 @@
 package com.falanero.katanamod.item.katana;
 
 import com.falanero.katanamod.callback.*;
-import com.falanero.katanamod.registry.Instances;
 import com.falanero.katanamod.util.Nbt;
 import com.falanero.katanamod.util.Souls;
 import com.falanero.katanamod.util.ability.*;
 import com.falanero.katanamod.util.ability.common.kill.SeizeCommonAbility;
 import com.falanero.katanamod.util.ability.common.kill.ShatterCommonAbility;
-import com.falanero.katanamod.util.ability.diamond.SwiftnessDiamondAbility;
 import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,15 +15,14 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.system.NonnullDefault;
 
 import java.util.*;
 
@@ -40,68 +37,75 @@ public abstract class KatanaItem extends SwordItem {
     }
 
     private void registerAbilities() {
-        registerAttackAbility(OnAttackCallback.ON_SWEEPING_ATTACK_CALLBACK_EVENT, getOnSweepAttackAbility());
-        registerAttackAbility(OnAttackCallback.ON_CRIT_ATTACK_CALLBACK_EVENT, getOnCritAttackAbility());
-        registerAttackAbility(OnAttackCallback.ON_SPRINT_ATTACK_CALLBACK_EVENT, getOnSprintAttackAbility());
-        registerOnKatanaBreakAbility();
-        registerOnKilledEntityAbility();
-        registerTickAbility();
+        registerAttackAbilities(OnAttackCallback.ON_SWEEPING_ATTACK_CALLBACK_EVENT, getOnSweepAttackAbilities());
+        registerAttackAbilities(OnAttackCallback.ON_CRIT_ATTACK_CALLBACK_EVENT, getOnCritAttackAbilities());
+        registerAttackAbilities(OnAttackCallback.ON_SPRINT_ATTACK_CALLBACK_EVENT, getOnSprintAttackAbilities());
+        registerOnKatanaBreakAbilities();
+        registerOnKilledEntityAbilities();
+        registerTickAbilities();
         registerConsumables();
     }
 
-    private void registerOnKatanaBreakAbility(){
+    private void registerOnKatanaBreakAbilities() {
+        List<OnKatanaBreakAbility> abilities = getOnKatanaBreakAbilities();
+
         ToolBreakCallback.EVENT.register((LivingEntity entity) -> {
             ItemStack stack = getKatanaStack(entity, Hand.MAIN_HAND);
             OnKatanaBreakAbility shatterAbility = new ShatterCommonAbility();
 
             if ((stack != null) && !entity.world.isClient()) {
                 shatterAbility.apply(entity, stack, this);
+                abilities.stream().filter(Objects::nonNull).forEach(ability -> {
+                    ability.apply(entity, stack, this);
+                });
             }
         });
     }
 
-    private void registerOnKilledEntityAbility(){
+    private void registerOnKilledEntityAbilities() {
         KillAbility seizeAbility = hasSeizeAbility() ? new SeizeCommonAbility() : null;
-        KillAbility ability = getKillAbility();
+        List<KillAbility> abilities = getKillAbilities();
 
-        OnKilledByCallback.EVENT.register((LivingEntity killer)->{
+        OnKilledByCallback.EVENT.register((LivingEntity killer) -> {
             if (killer == null)
                 return;
 
             ItemStack stack = getKatanaStack(killer, Hand.MAIN_HAND);
             if ((stack != null) && !killer.world.isClient) {
-                 if(seizeAbility != null) seizeAbility.apply(killer, stack);
-                 if(ability != null) ability.apply(killer, stack);
+                if (seizeAbility != null) seizeAbility.apply(killer, stack);
+                abilities.stream().filter(Objects::nonNull).forEach(ability -> {
+                    ability.apply(killer, stack);
+                });
             }
         });
     }
 
-    private void registerTickAbility(){
-        TickAbility ability = getTickAbility();
-        if(ability == null) return;
+    private void registerTickAbilities() {
+        List<TickAbility> abilities = getTickAbilities();
 
-        PlayerEntityTickCallback.EVENT.register((PlayerEntity player)->{
+        PlayerEntityTickCallback.EVENT.register((PlayerEntity player) -> {
             if (player == null) return;
 
             ItemStack stack = getKatanaStack(player, null);
             if (stack != null) {
                 int level = Souls.getCurrentLevel(Nbt.getSoulCount(stack));
-                ability.effectTick(player, level);
+                abilities.stream().filter(Objects::nonNull).forEach(ability -> {
+                    ability.apply(player, level);
+                });
             }
         });
     }
 
-    private void registerAttackAbility(Event<OnAttackCallback> event, AttackAbility ability) {
-        if (ability == null)
-            return;
-
+    private void registerAttackAbilities(Event<OnAttackCallback> event, List<AttackAbility> abilities) {
         event.register((Entity target, PlayerEntity attacker) -> {
             ItemStack stack = getKatanaStack(attacker, Hand.MAIN_HAND);
             if ((target == null) || (attacker == null) || (stack == null))
                 return;
 
             int level = Souls.getCurrentLevel(Nbt.getSoulCount(stack));
-            ability.apply(stack, (LivingEntity) target, attacker, level);
+            abilities.stream().filter(Objects::nonNull).forEach(ability -> {
+                ability.apply(stack, (LivingEntity) target, attacker, level);
+            });
         });
     }
 
@@ -133,18 +137,33 @@ public abstract class KatanaItem extends SwordItem {
     }
 
 
+    @NotNull
     protected abstract Map<Item, ConsumableAbility> getConsumableAbilities();
 
-    protected abstract AttackAbility getOnSweepAttackAbility();
+    @NotNull
+    protected abstract List<AttackAbility> getOnSweepAttackAbilities();
 
-    protected abstract AttackAbility getOnCritAttackAbility();
+    @NotNull
+    protected abstract List<AttackAbility> getOnCritAttackAbilities();
 
-    protected abstract AttackAbility getOnSprintAttackAbility();
+    @NotNull
+    protected abstract List<AttackAbility> getOnSprintAttackAbilities();
 
-    protected abstract AttackAbility getPostAttackAbility();
-    protected abstract TickAbility getTickAbility();
-    protected abstract KillAbility getKillAbility();
+    @NotNull
+    protected abstract List<AttackAbility> getPostAttackAbilities();
+
+    @NotNull
+    protected abstract List<TickAbility> getTickAbilities();
+
+    @NotNull
+    protected abstract List<KillAbility> getKillAbilities();
+
+    @NotNull
+    protected abstract List<OnKatanaBreakAbility> getOnKatanaBreakAbilities();
+
+    @NotNull
     public abstract Item getShatterItem();
+
     protected abstract boolean hasSeizeAbility();
 
     public abstract void appendTooltipExtra(ItemStack itemStack, List<Text> tooltip);
@@ -168,8 +187,10 @@ public abstract class KatanaItem extends SwordItem {
             return false;
 
         int level = Souls.getCurrentLevel(Nbt.getSoulCount(stack));
-        AttackAbility ability = getPostAttackAbility();
-        if (ability != null) getPostAttackAbility().apply(stack, target, attacker, level);
+        List<AttackAbility> abilities = getPostAttackAbilities();
+        abilities.stream().filter(Objects::nonNull).forEach(ability -> {
+            ability.apply(stack, target, attacker, level);
+        });
 
         stack.damage(1, attacker, e -> {
             e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);

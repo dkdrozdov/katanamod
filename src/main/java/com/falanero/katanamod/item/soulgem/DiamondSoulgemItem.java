@@ -1,16 +1,17 @@
 package com.falanero.katanamod.item.soulgem;
 
 import com.falanero.katanamod.util.Nbt;
-import com.falanero.katanamod.util.Souls;
-import com.falanero.katanamod.util.Tooltip;
-import com.falanero.katanamod.util.ability.diamond.SkyboundDiamondAbility;
-import com.falanero.katanamod.util.ability.diamond.SwiftnessDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.FeatherfallDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.attack.SkyboundDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.consumable.FeatherbladeDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.consumable.WindbombDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.tick.SpringDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.tick.SwiftnessDiamondAbility;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Pair;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -28,6 +29,10 @@ public class DiamondSoulgemItem extends SoulGemItem{
         tooltip.add(Text.translatable("item.katanamod.diamond_katana.element_description"));
         SkyboundDiamondAbility.appendTooltip(level, tooltip);
         SwiftnessDiamondAbility.appendTooltip(level, tooltip);
+        SpringDiamondAbility.appendTooltip(level, tooltip);
+        FeatherfallDiamondAbility.appendTooltip(level, tooltip);
+        WindbombDiamondAbility.appendTooltip(level, tooltip);
+        FeatherbladeDiamondAbility.appendTooltip(level, tooltip);
     }
 
     public void appendTooltipExtra(ItemStack stack, List<Text> tooltip){

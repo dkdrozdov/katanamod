@@ -7,13 +7,35 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
+import org.spongepowered.tools.obfuscation.mapping.fg3.MappingMethodLazy;
 
-public class FeatherbladeDiamondAbility implements ConsumableAbility {
+import java.util.List;
 
-    @Override
-    public boolean apply(World world, PlayerEntity user, Hand hand) {
+import static com.falanero.katanamod.util.Utility.arithmeticProgression;
+import static com.falanero.katanamod.util.Utility.toRoman;
+
+public class FeatherbladeDiamondAbility {
+    public static ConsumableAbility getAbility(){
+        return FeatherbladeDiamondAbility::apply;
+    }
+    private static int getLevel(int itemLevel) {
+        return arithmeticProgression(1, 2, 10, itemLevel);
+    }
+    public static void appendTooltip(int itemLevel, List<Text> tooltip) {
+        int abilityLevel = getLevel(itemLevel);
+        if (abilityLevel < 1)
+            return;
+
+        tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability.featherblade.title", toRoman(abilityLevel)).formatted(Formatting.BOLD));
+        tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability.featherblade.description.line_1"));
+        tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability.featherblade.description.line_2"));
+    }
+
+    public static boolean apply(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         user.getItemCooldownManager().set(itemStack.getItem(), 5);
 

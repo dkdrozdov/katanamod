@@ -4,15 +4,13 @@ import com.falanero.katanamod.callback.*;
 import com.falanero.katanamod.item.soulgem.DiamondSoulgemItem;
 import com.falanero.katanamod.registry.Instances;
 import com.falanero.katanamod.util.Nbt;
-import com.falanero.katanamod.util.ability.AttackAbility;
-import com.falanero.katanamod.util.ability.ConsumableAbility;
-import com.falanero.katanamod.util.ability.KillAbility;
-import com.falanero.katanamod.util.ability.TickAbility;
-import com.falanero.katanamod.util.ability.diamond.SkyboundDiamondAbility;
-import com.falanero.katanamod.util.ability.diamond.SwiftnessDiamondAbility;
+import com.falanero.katanamod.util.ability.*;
+import com.falanero.katanamod.util.ability.diamond.FeatherfallDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.attack.SkyboundDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.tick.SpringDiamondAbility;
+import com.falanero.katanamod.util.ability.diamond.tick.SwiftnessDiamondAbility;
 import com.falanero.katanamod.util.ability.diamond.consumable.FeatherbladeDiamondAbility;
 import com.falanero.katanamod.util.ability.diamond.consumable.WindbombDiamondAbility;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -22,7 +20,9 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -40,44 +40,50 @@ public class DiamondKatanaItem extends KatanaItem {
     }
 
     @Override
-    public Map<Item, ConsumableAbility> getConsumableAbilities() {
+    public @NotNull Map<Item, ConsumableAbility> getConsumableAbilities() {
         return Map.of(
-                PHANTOM_MEMBRANE, new WindbombDiamondAbility(),
-                FEATHER, new FeatherbladeDiamondAbility());
+                PHANTOM_MEMBRANE, WindbombDiamondAbility.getAbility(),
+                FEATHER, FeatherbladeDiamondAbility.getAbility());
     }
 
     @Override
-    protected AttackAbility getOnSweepAttackAbility() {
-        return null;
+    protected @NotNull List<AttackAbility> getOnSweepAttackAbilities() {
+        return Collections.emptyList();
     }
 
     @Override
-    protected AttackAbility getOnCritAttackAbility() {
-        return null;
+    protected @NotNull List<AttackAbility> getOnCritAttackAbilities() {
+        return Collections.emptyList();
     }
 
     @Override
-    protected AttackAbility getOnSprintAttackAbility() {
-        return null;
+    protected @NotNull List<AttackAbility> getOnSprintAttackAbilities() {
+        return Collections.emptyList();
     }
 
     @Override
-    protected AttackAbility getPostAttackAbility() {
-        return new SkyboundDiamondAbility();
+    protected @NotNull List<AttackAbility> getPostAttackAbilities() {
+        return List.of(SkyboundDiamondAbility.getAbility());
     }
 
     @Override
-    protected TickAbility getTickAbility() {
-        return new SwiftnessDiamondAbility();
+    protected @NotNull List<TickAbility> getTickAbilities() {
+        return List.of(SwiftnessDiamondAbility.getAbility(),
+                SpringDiamondAbility.getAbility());
     }
 
     @Override
-    protected KillAbility getKillAbility() {
-        return null;
+    protected @NotNull List<KillAbility> getKillAbilities() {
+        return Collections.emptyList();
     }
 
     @Override
-    public Item getShatterItem() {
+    protected @NotNull List<OnKatanaBreakAbility> getOnKatanaBreakAbilities() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public @NotNull Item getShatterItem() {
         return Instances.DIAMOND_SOULGEM;
     }
 
@@ -97,7 +103,7 @@ public class DiamondKatanaItem extends KatanaItem {
     private TypedActionResult<Integer> onComputeFallDamage(int fallDamage, float fallDistance, float damageMultiplier, LivingEntity entity) {
         if (entity instanceof PlayerEntity player && isHeldBy(player, null)) {
             int itemLevel = getCurrentLevel(Nbt.getSoulCount(getKatanaStack(player, null)));
-            return SwiftnessDiamondAbility.onComputeFallDamage(fallDamage, fallDistance, damageMultiplier, entity, itemLevel);
+            return FeatherfallDiamondAbility.onComputeFallDamage(fallDamage, fallDistance, damageMultiplier, entity, itemLevel);
         }
         return new TypedActionResult<>(ActionResult.FAIL, fallDamage);
     }

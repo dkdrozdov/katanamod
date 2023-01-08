@@ -1,4 +1,4 @@
-package com.falanero.katanamod.util.ability.diamond;
+package com.falanero.katanamod.util.ability.diamond.attack;
 
 import com.falanero.katanamod.KatanaMod;
 import com.falanero.katanamod.util.Nbt;
@@ -26,7 +26,7 @@ import java.util.List;
 import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
 
-public class SkyboundDiamondAbility implements AttackAbility {
+public class SkyboundDiamondAbility {
     private static int getLevel(int itemLevel) {
         return arithmeticProgression(2, 2, 6, itemLevel);
     }
@@ -65,6 +65,9 @@ public class SkyboundDiamondAbility implements AttackAbility {
         return hitCount >= currentHitCountTrigger;
     }
 
+    public static AttackAbility getAbility(){
+        return SkyboundDiamondAbility::apply;
+    }
     private static void applyAbility(LivingEntity target, LivingEntity player, int abilityLevel) {
         int jumpBoostLevel = getJumpBoostLevel(abilityLevel) - 1;
         int jumpBoostTimeTicks = (int) (getJumpBoostTime(abilityLevel) * 20);
@@ -115,7 +118,7 @@ public class SkyboundDiamondAbility implements AttackAbility {
 //        }
     }
 
-    public void apply(ItemStack stack, LivingEntity target, LivingEntity attacker, int itemLevel) {
+    static void apply(ItemStack stack, LivingEntity target, LivingEntity attacker, int itemLevel) {
         if(attacker.world.isClient){
             KatanaMod.LOGGER.info("Tried to apply SkyboundDiamondAbility in client thread.");
             return;

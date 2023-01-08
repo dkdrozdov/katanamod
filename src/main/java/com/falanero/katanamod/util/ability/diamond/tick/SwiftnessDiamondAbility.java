@@ -1,4 +1,4 @@
-package com.falanero.katanamod.util.ability.diamond;
+package com.falanero.katanamod.util.ability.diamond.tick;
 
 import com.falanero.katanamod.util.ability.TickAbility;
 import net.minecraft.entity.LivingEntity;
@@ -16,7 +16,7 @@ import java.util.List;
 import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
 
-public class SwiftnessDiamondAbility implements TickAbility {
+public class SwiftnessDiamondAbility{
     private static int getLevel(int itemLevel) {
         return arithmeticProgression(1, 2, 10, itemLevel);
     }
@@ -36,20 +36,11 @@ public class SwiftnessDiamondAbility implements TickAbility {
                 return new TypedActionResult<>(ActionResult.FAIL, airStrafingSpeed);
             return new TypedActionResult<>(ActionResult.SUCCESS, Math.max(player.getMovementSpeed() / 8.328f, airStrafingSpeed));
     }
-
-    public static TypedActionResult<Integer> onComputeFallDamage(int fallDamage, float fallDistance, float damageMultiplier, LivingEntity entity, int itemLevel) {
-        int abilityLevel = getLevel(itemLevel);
-        if (abilityLevel < 1)
-            return new TypedActionResult<>(ActionResult.FAIL, fallDamage);
-        if(entity.isSneaking()){
-            int rawDamage = MathHelper.ceil((fallDistance - 3.0f) * damageMultiplier);
-            float reductionFactor = 1f - (4 + 7 * (float)abilityLevel)/100f;
-            return new TypedActionResult<>(ActionResult.SUCCESS, Math.min((int) Math.floor(rawDamage * reductionFactor), fallDamage));
-        }
-        return new TypedActionResult<>(ActionResult.FAIL, fallDamage);
+    public static TickAbility getAbility(){
+        return SwiftnessDiamondAbility::apply;
     }
 
-    public void effectTick(PlayerEntity player, int itemLevel) {
+    public static void apply(PlayerEntity player, int itemLevel) {
         int abilityLevel = getLevel(itemLevel);
         if (abilityLevel < 1)
             return;

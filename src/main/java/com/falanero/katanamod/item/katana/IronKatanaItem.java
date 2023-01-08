@@ -1,16 +1,14 @@
 package com.falanero.katanamod.item.katana;
 
 import com.falanero.katanamod.callback.ToolBreakCallback;
-import com.falanero.katanamod.util.ability.AttackAbility;
-import com.falanero.katanamod.util.ability.ConsumableAbility;
-import com.falanero.katanamod.util.ability.KillAbility;
-import com.falanero.katanamod.util.ability.TickAbility;
+import com.falanero.katanamod.util.ability.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,42 +21,48 @@ public class IronKatanaItem extends KatanaItem {
     }
 
     @Override
-    protected Map<Item, ConsumableAbility> getConsumableAbilities() {
+    protected @NotNull Map<Item, ConsumableAbility> getConsumableAbilities() {
         return Collections.emptyMap();
     }
 
     @Override
-    protected AttackAbility getOnSweepAttackAbility() {
-        return null;
+    protected @NotNull List<AttackAbility> getOnSweepAttackAbilities() {
+        return Collections.emptyList();
     }
 
     @Override
-    protected AttackAbility getOnCritAttackAbility() {
-        return null;
+    protected @NotNull List<AttackAbility> getOnCritAttackAbilities() {
+        return Collections.emptyList();
     }
 
     @Override
-    protected AttackAbility getOnSprintAttackAbility() {
-        return null;
+    protected @NotNull List<AttackAbility> getOnSprintAttackAbilities() {
+        return Collections.emptyList();
     }
 
     @Override
-    protected AttackAbility getPostAttackAbility() {
-        return null;
+    protected @NotNull List<AttackAbility> getPostAttackAbilities() {
+        return Collections.emptyList();
     }
 
     @Override
-    protected TickAbility getTickAbility() {
-        return null;
+    protected @NotNull List<TickAbility> getTickAbilities() {
+        return Collections.emptyList();
     }
 
     @Override
-    protected KillAbility getKillAbility() {
-        return null;
+    protected @NotNull List<KillAbility> getKillAbilities() {
+        return Collections.emptyList();
     }
 
     @Override
-    public Item getShatterItem() {
+    protected @NotNull List<OnKatanaBreakAbility> getOnKatanaBreakAbilities() {
+        return Collections.emptyList();
+    }
+
+
+    @Override
+    public @NotNull Item getShatterItem() {
         return Items.IRON_INGOT;
     }
 

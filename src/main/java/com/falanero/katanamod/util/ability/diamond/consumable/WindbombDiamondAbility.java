@@ -16,6 +16,8 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -25,10 +27,26 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class WindbombDiamondAbility implements ConsumableAbility {
+import static com.falanero.katanamod.util.Utility.arithmeticProgression;
+import static com.falanero.katanamod.util.Utility.toRoman;
 
-    @Override
-    public boolean apply(World world, PlayerEntity user, Hand hand) {
+public class WindbombDiamondAbility {
+    public static ConsumableAbility getAbility(){
+        return WindbombDiamondAbility::apply;
+    }
+    private static int getLevel(int itemLevel) {
+        return arithmeticProgression(1, 2, 10, itemLevel);
+    }
+    public static void appendTooltip(int itemLevel, List<Text> tooltip) {
+        int abilityLevel = getLevel(itemLevel);
+        if (abilityLevel < 1)
+            return;
+
+        tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability.windbomb.title", toRoman(abilityLevel)).formatted(Formatting.BOLD));
+        tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability.windbomb.description.line_1"));
+        tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability.windbomb.description.line_2"));
+    }
+    public static boolean apply(World world, PlayerEntity user, Hand hand) {
         if (world.isClient)
             return true;
 
