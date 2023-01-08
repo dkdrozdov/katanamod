@@ -2,6 +2,7 @@ package com.falanero.katanamod.util.ability.diamond;
 
 import com.falanero.katanamod.KatanaMod;
 import com.falanero.katanamod.util.Nbt;
+import com.falanero.katanamod.util.ability.AttackAbility;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -25,7 +26,7 @@ import java.util.List;
 import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
 
-public class SkyboundDiamondAbility {
+public class SkyboundDiamondAbility implements AttackAbility {
     private static int getLevel(int itemLevel) {
         return arithmeticProgression(2, 2, 6, itemLevel);
     }
@@ -64,7 +65,7 @@ public class SkyboundDiamondAbility {
         return hitCount >= currentHitCountTrigger;
     }
 
-    public static void apply(LivingEntity target, LivingEntity player, int abilityLevel) {
+    private static void applyAbility(LivingEntity target, LivingEntity player, int abilityLevel) {
         int jumpBoostLevel = getJumpBoostLevel(abilityLevel) - 1;
         int jumpBoostTimeTicks = (int) (getJumpBoostTime(abilityLevel) * 20);
         double targetKnockbackResistance = Math.max(0.0, 1.0 - target.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE));
@@ -114,7 +115,7 @@ public class SkyboundDiamondAbility {
 //        }
     }
 
-    public static void tryApply(ItemStack stack, LivingEntity target, LivingEntity attacker, int itemLevel) {
+    public void apply(ItemStack stack, LivingEntity target, LivingEntity attacker, int itemLevel) {
         if(attacker.world.isClient){
             KatanaMod.LOGGER.info("Tried to apply SkyboundDiamondAbility in client thread.");
             return;
@@ -128,7 +129,7 @@ public class SkyboundDiamondAbility {
         int hitCount = Nbt.getHitCount(stack) + 1;
         if (isTriggered(abilityLevel, hitCount)) {
             hitCount = 0;
-            apply(target, attacker, abilityLevel);
+            applyAbility(target, attacker, abilityLevel);
         }
         Nbt.setHitCount(stack, hitCount);
     }

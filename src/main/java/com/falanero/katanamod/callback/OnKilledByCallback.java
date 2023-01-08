@@ -6,11 +6,11 @@ import net.minecraft.entity.LivingEntity;
 
 public interface OnKilledByCallback {
     Event<OnKilledByCallback> EVENT = EventFactory.createArrayBacked(OnKilledByCallback.class,
-            (listeners) -> (LivingEntity adversary) ->{
+            (listeners) -> (LivingEntity killer) ->{
                 for (OnKilledByCallback listener : listeners){
-                    listener.notify(adversary);
+                    listener.notify(killer);
                 }
             });
 
-    void notify(LivingEntity adversary);
+    void notify(LivingEntity killer);
 }

@@ -43,16 +43,6 @@ public class Souls {
         tooltip.add(Text.translatable("item.katanamod.tooltip_souls", soulsCurrent, soulsNeeded));
     }
 
-    public static void appendTooltipExtraDiamond(Pair<ItemStack, List<Text>> callbackContext){
-        ItemStack stack = callbackContext.getLeft();
-        List<Text> tooltip = callbackContext.getRight();
-        int level = getCurrentLevel(Nbt.getSoulCount(stack));
-
-        tooltip.add(Text.translatable("item.katanamod.diamond_katana.element_description"));
-        SkyboundDiamondAbility.appendTooltip(level, tooltip);
-        SwiftnessDiamondAbility.appendTooltip(level, tooltip);
-    }
-
     static public void appendTooltipLevel(ItemStack stack, List<Text> tooltip){
         int level = getCurrentLevel(Nbt.getSoulCount(stack));
 
