@@ -25,6 +25,10 @@ public class FeatherbladeDiamondAbility {
     private static int getLevel(int itemLevel) {
         return arithmeticProgression(1, 2, 10, itemLevel);
     }
+    private static float getRadius(int abilityLevel){
+        //TODO: scale
+        return 2f;
+    }
     public static void appendTooltip(int itemLevel, List<Text> tooltip) {
         int abilityLevel = getLevel(itemLevel);
         if (abilityLevel < 1)
@@ -35,7 +39,7 @@ public class FeatherbladeDiamondAbility {
         tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability.featherblade.description.line_2"));
     }
 
-    public static boolean apply(World world, PlayerEntity user, Hand hand) {
+    public static boolean apply(World world, PlayerEntity user, Hand hand, int itemLevel) {
         ItemStack itemStack = user.getStackInHand(hand);
         user.getItemCooldownManager().set(itemStack.getItem(), 5);
 
@@ -44,7 +48,8 @@ public class FeatherbladeDiamondAbility {
         if (!world.isClient) {
             FeatherbladeEntity featherbladeEntity = new FeatherbladeEntity(world, user);
             featherbladeEntity.setItem(itemStack);
-            featherbladeEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 1.5F, 0F);
+            featherbladeEntity.setRadius(getRadius(getLevel(itemLevel)));
+            featherbladeEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 0.3F, 0F);
             world.spawnEntity(featherbladeEntity);
         }
 

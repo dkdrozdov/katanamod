@@ -1,6 +1,7 @@
 package com.falanero.katanamod.util.ability.diamond.consumable;
 
 import com.falanero.katanamod.KatanaMod;
+import com.falanero.katanamod.item.katana.KatanaItem;
 import com.falanero.katanamod.util.ability.ConsumableAbility;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -16,6 +17,8 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -35,8 +38,9 @@ public class WindbombDiamondAbility {
         return WindbombDiamondAbility::apply;
     }
     private static int getLevel(int itemLevel) {
-        return arithmeticProgression(1, 2, 10, itemLevel);
+        return arithmeticProgression(1, 2, getMaxLevel(), itemLevel);
     }
+    private static int getMaxLevel(){return 10;}
     public static void appendTooltip(int itemLevel, List<Text> tooltip) {
         int abilityLevel = getLevel(itemLevel);
         if (abilityLevel < 1)
@@ -46,19 +50,20 @@ public class WindbombDiamondAbility {
         tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability.windbomb.description.line_1"));
         tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability.windbomb.description.line_2"));
     }
-    public static boolean apply(World world, PlayerEntity user, Hand hand) {
+    public static boolean apply(World world, PlayerEntity user, Hand hand, int itemLevel) {
+        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.NEUTRAL, 2.0F, 1.5F); // plays a globalSoundEvent
+
         if (world.isClient)
             return true;
-
-//        boolean sneaking = user.isSneaking();
 
         ItemStack itemStack = user.getStackInHand(hand);
         user.getItemCooldownManager().set(itemStack.getItem(), 20 * 3);
 
         Vec3d pos = user.getPos().add(0, -2.5, 0);
-        float power = 2.0f;
-        float radius = 12.0f;
-        float softness = 1.3f;  // (0, 1] has bell shape, [1, +) has helmet shape
+        float levelFactor = ((float)getLevel(itemLevel)/((float)getMaxLevel()));
+        float power = 0.3f + 1.7f * levelFactor;
+        float radius = 7.0f + 5.0f * levelFactor;
+        float softness = 1.3f;  // (0, 1] has bell shape, [1, +) has round shape
         int x1 = MathHelper.floor(pos.x - (double) radius - 1.0);
         int x2 = MathHelper.floor(pos.x + (double) radius + 1.0);
         int y1 = MathHelper.floor(pos.y - (double) radius - 1.0);

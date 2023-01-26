@@ -11,6 +11,8 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.UUID;
+
 public class KatanaModClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
@@ -40,7 +42,7 @@ public class KatanaModClient implements ClientModInitializer {
             assert client.world != null;
             BlockPos blockPos = buf.readBlockPos();
             client.execute(()->{
-                client.world.playSound(blockPos.getX(), blockPos.getY()+1, blockPos.getZ(), SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.PLAYERS, 8.0f, (1.3f + (client.world.random.nextFloat() - client.world.random.nextFloat()) * 0.2f), false);
+//                client.world.playSound(blockPos.getX(), blockPos.getY()+1, blockPos.getZ(), SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.PLAYERS, 8.0f, (1.3f + (client.world.random.nextFloat() - client.world.random.nextFloat()) * 0.2f), false);
                 client.world.addParticle(ParticleTypes.EXPLOSION, blockPos.getX()-3, blockPos.getY()+4, blockPos.getZ()-3, -4.0, +4.0, -4.0);
                 client.world.addParticle(ParticleTypes.EXPLOSION, blockPos.getX()-3, blockPos.getY()-2, blockPos.getZ()-3, -4.0, -4.0, -4.0);
                 client.world.addParticle(ParticleTypes.EXPLOSION, blockPos.getX()-3, blockPos.getY()+4, blockPos.getZ()+3, -4.0, +4.0, +4.0);

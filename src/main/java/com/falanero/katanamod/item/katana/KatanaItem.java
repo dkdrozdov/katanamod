@@ -70,7 +70,8 @@ public abstract class KatanaItem extends SwordItem {
             if (killer == null)
                 return;
 
-            ItemStack stack = getKatanaStack(killer, Hand.MAIN_HAND);
+            ItemStack stack = getPrioritizedKatanaStack(killer);
+
             if ((stack != null) && !killer.world.isClient) {
                 if (seizeAbility != null) seizeAbility.apply(killer, stack);
                 abilities.stream().filter(Objects::nonNull).forEach(ability -> {
@@ -121,8 +122,24 @@ public abstract class KatanaItem extends SwordItem {
     }
 
     /**
+     * @return the stack of runtime katana type the entity has in hands.
+     * Returns {@code null} if this type's katana is not the main one, when the entity has 2 katanas in their hands.
+     */
+    public ItemStack getPrioritizedKatanaStack(LivingEntity entity){
+        ItemStack mainStackKatana = getKatanaStack(entity, Hand.MAIN_HAND);
+        ItemStack offStackKatana = getKatanaStack(entity, Hand.OFF_HAND);
+
+
+
+        if((mainStackKatana != null) || ((offStackKatana != null) && !(entity.getMainHandStack().getItem() instanceof KatanaItem))){
+            return mainStackKatana != null ? mainStackKatana : offStackKatana;
+        }
+        return null;
+    }
+
+    /**
      * @param hand hand to get stack from. If {@code null}, checks both hands.
-     * @return the stack of runtime katana class the entity has in the given hand, or {@code null} if no such stack is found.
+     * @return the stack of runtime katana type the entity has in the given hand, or {@code null} if no such stack is found.
      */
     public ItemStack getKatanaStack(LivingEntity entity, Hand hand) {
         if (hand == null) {
@@ -174,9 +191,11 @@ public abstract class KatanaItem extends SwordItem {
         OnItemUseCallback.ON_ITEM_USE_CALLBACK.register((world, user, hand) -> {
             Item usedItem = user.getStackInHand(hand).getItem();
             ConsumableAbility ability = getConsumableAbilities().get(usedItem);
-            if ((ability != null) && (isHeldBy(user, null)))
-                if (ability.apply(world, user, hand))
+            if ((ability != null) && (isHeldBy(user, null))){
+                int itemLevel = Souls.getCurrentLevel(Nbt.getSoulCount(getKatanaStack(user, null)));
+                if (ability.apply(world, user, hand, itemLevel))
                     return ActionResult.CONSUME;
+            }
             return ActionResult.PASS;
         });
     }

@@ -92,8 +92,8 @@ public class SkyboundDiamondAbility {
         target.velocityModified = true;
         if (target instanceof PlayerEntity)((ServerPlayerEntity)target).networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(target));
         ((ServerPlayerEntity)player).networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(player));
-        player.velocityModified = false;
-        target.velocityModified = false;
+        player.velocityModified = false;        target.velocityModified = false;
+
 
         BlockPos targetPos = new BlockPos(target.getPos());
         BlockPos playerPos = new BlockPos(player.getPos());
