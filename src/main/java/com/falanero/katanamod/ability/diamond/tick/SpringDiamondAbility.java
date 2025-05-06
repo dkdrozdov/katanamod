@@ -1,6 +1,6 @@
-package com.falanero.katanamod.util.ability.diamond.tick;
+package com.falanero.katanamod.ability.diamond.tick;
 
-import com.falanero.katanamod.util.ability.TickAbility;
+import com.falanero.katanamod.ability.TickAbility;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;

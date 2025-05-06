@@ -1,5 +1,6 @@
 package com.falanero.katanamod.mixin;
 
+import com.falanero.katanamod.KatanaMod;
 import com.falanero.katanamod.callback.OnAttackCallback;
 import com.falanero.katanamod.callback.PlayerEntityTickCallback;
 import net.minecraft.entity.Entity;

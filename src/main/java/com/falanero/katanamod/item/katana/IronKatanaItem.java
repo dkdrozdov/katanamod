@@ -1,7 +1,7 @@
 package com.falanero.katanamod.item.katana;
 
 import com.falanero.katanamod.callback.ToolBreakCallback;
-import com.falanero.katanamod.util.ability.*;
+import com.falanero.katanamod.ability.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

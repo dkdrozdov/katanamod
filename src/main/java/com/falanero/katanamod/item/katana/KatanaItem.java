@@ -1,11 +1,11 @@
 package com.falanero.katanamod.item.katana;
 
 import com.falanero.katanamod.callback.*;
-import com.falanero.katanamod.util.Nbt;
 import com.falanero.katanamod.util.Souls;
-import com.falanero.katanamod.util.ability.*;
-import com.falanero.katanamod.util.ability.common.kill.SeizeCommonAbility;
-import com.falanero.katanamod.util.ability.common.kill.ShatterCommonAbility;
+import com.falanero.katanamod.ability.*;
+import com.falanero.katanamod.ability.common.kill.SeizeCommonAbility;
+import com.falanero.katanamod.ability.common.kill.ShatterCommonAbility;
+import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
 import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.screen.Screen;
@@ -22,7 +22,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.system.NonnullDefault;
 
 import java.util.*;
 
@@ -89,7 +88,7 @@ public abstract class KatanaItem extends SwordItem {
 
             ItemStack stack = getKatanaStack(player, null);
             if (stack != null) {
-                int level = Souls.getCurrentLevel(Nbt.getSoulCount(stack));
+                int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
                 abilities.stream().filter(Objects::nonNull).forEach(ability -> {
                     ability.apply(player, level);
                 });
@@ -103,7 +102,7 @@ public abstract class KatanaItem extends SwordItem {
             if ((target == null) || (attacker == null) || (stack == null))
                 return;
 
-            int level = Souls.getCurrentLevel(Nbt.getSoulCount(stack));
+            int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
             abilities.stream().filter(Objects::nonNull).forEach(ability -> {
                 ability.apply(stack, (LivingEntity) target, attacker, level);
             });
@@ -192,7 +191,7 @@ public abstract class KatanaItem extends SwordItem {
             Item usedItem = user.getStackInHand(hand).getItem();
             ConsumableAbility ability = getConsumableAbilities().get(usedItem);
             if ((ability != null) && (isHeldBy(user, null))){
-                int itemLevel = Souls.getCurrentLevel(Nbt.getSoulCount(getKatanaStack(user, null)));
+                int itemLevel = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(user, null)));
                 if (ability.apply(world, user, hand, itemLevel))
                     return ActionResult.CONSUME;
             }
@@ -205,7 +204,7 @@ public abstract class KatanaItem extends SwordItem {
         if ((target == null) || (attacker == null) || (stack == null))
             return false;
 
-        int level = Souls.getCurrentLevel(Nbt.getSoulCount(stack));
+        int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
         List<AttackAbility> abilities = getPostAttackAbilities();
         abilities.stream().filter(Objects::nonNull).forEach(ability -> {
             ability.apply(stack, target, attacker, level);
@@ -231,7 +230,7 @@ public abstract class KatanaItem extends SwordItem {
 
     @Override
     public Text getName(ItemStack stack) {
-        return Text.translatable(this.getTranslationKey(stack), getCurrentLevel(Nbt.getSoulCount(stack)));
+        return Text.translatable(this.getTranslationKey(stack), getCurrentLevel(KatanamodItemStackData.getSoulCount(stack)));
     }
 
     @Override

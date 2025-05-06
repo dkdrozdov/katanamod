@@ -1,8 +1,9 @@
-package com.falanero.katanamod.util.ability.diamond.attack;
+package com.falanero.katanamod.ability.diamond.attack;
 
 import com.falanero.katanamod.KatanaMod;
-import com.falanero.katanamod.util.Nbt;
-import com.falanero.katanamod.util.ability.AttackAbility;
+import com.falanero.katanamod.registry.IDs;
+import com.falanero.katanamod.ability.AttackAbility;
+import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -104,7 +105,7 @@ public class SkyboundDiamondAbility {
 
 //        KatanaMod.LOGGER.info("applying SkyboundDiamondAbility. Sending packets to :");
         for (ServerPlayerEntity serverPlayerEntity : PlayerLookup.tracking((ServerWorld) player.world, targetPos)) {
-            ServerPlayNetworking.send(serverPlayerEntity, KatanaMod.SKYBOUND_S2C_PACKET_ID, targetBuf);
+            ServerPlayNetworking.send(serverPlayerEntity, IDs.SKYBOUND_S2C_PACKET_ID, targetBuf);
 //            KatanaMod.LOGGER.info("{}", serverPlayerEntity.getName().getString());
         }
 //        KatanaMod.LOGGER.info("applying SkyboundDiamondAbility. Packets sent.");
@@ -129,11 +130,11 @@ public class SkyboundDiamondAbility {
         if (abilityLevel < 1)
             return;
 
-        int hitCount = Nbt.getHitCount(stack) + 1;
+        int hitCount = KatanamodItemStackData.getHitCount(stack) + 1;
         if (isTriggered(abilityLevel, hitCount)) {
             hitCount = 0;
             applyAbility(target, attacker, abilityLevel);
         }
-        Nbt.setHitCount(stack, hitCount);
+        KatanamodItemStackData.setHitCount(stack, hitCount);
     }
 }

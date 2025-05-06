@@ -8,6 +8,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
 public interface OnItemUseCallback {
+    /**
+     * Fires on successful item usage attempt if the initial action result is not consumed.
+     */
     Event<OnItemUseCallback> ON_ITEM_USE_CALLBACK = EventFactory.createArrayBacked(OnItemUseCallback.class,
             (listeners) -> (World world, PlayerEntity user, Hand hand) ->{
                 for (OnItemUseCallback listener : listeners) {

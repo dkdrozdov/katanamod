@@ -1,7 +1,7 @@
-package com.falanero.katanamod.util.ability.diamond.consumable;
+package com.falanero.katanamod.ability.diamond.consumable;
 
 import com.falanero.katanamod.entity.FeatherbladeEntity;
-import com.falanero.katanamod.util.ability.ConsumableAbility;
+import com.falanero.katanamod.ability.ConsumableAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;

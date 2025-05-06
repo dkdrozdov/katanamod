@@ -7,6 +7,9 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
 
 public interface OnGetAirStrafingSpeedCallback {
+    /**
+     * Fires on movement speed calculation and intercepts the air strafing speed getter.
+     */
     Event<OnGetAirStrafingSpeedCallback> ON_GET_AIR_STRAFING_SPEED_CALLBACK_EVENT = EventFactory.createArrayBacked(OnGetAirStrafingSpeedCallback.class,
             (listeners) -> (float airStrafingSpeed, LivingEntity entity) ->{
                 for (OnGetAirStrafingSpeedCallback listener : listeners){

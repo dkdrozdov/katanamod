@@ -1,8 +1,9 @@
-package com.falanero.katanamod.util.ability.diamond.consumable;
+package com.falanero.katanamod.ability.diamond.consumable;
 
 import com.falanero.katanamod.KatanaMod;
 import com.falanero.katanamod.item.katana.KatanaItem;
-import com.falanero.katanamod.util.ability.ConsumableAbility;
+import com.falanero.katanamod.registry.IDs;
+import com.falanero.katanamod.ability.ConsumableAbility;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -30,6 +31,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
+import static com.falanero.katanamod.registry.IDs.WINDBOMB_S2C_PACKET_ID;
 import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
 
@@ -108,7 +110,7 @@ public class WindbombDiamondAbility {
         PacketByteBuf targetBuf = PacketByteBufs.create();
         targetBuf.writeBlockPos(targetPos);
         for (ServerPlayerEntity serverPlayerEntity : PlayerLookup.tracking((ServerWorld) user.world, targetPos)) {
-            ServerPlayNetworking.send(serverPlayerEntity, KatanaMod.WINDBOMB_S2C_PACKET_ID, targetBuf);
+            ServerPlayNetworking.send(serverPlayerEntity, WINDBOMB_S2C_PACKET_ID, targetBuf);
 //          KatanaMod.LOGGER.info("{}", serverPlayerEntity.getName().getString());
         }
         return true;

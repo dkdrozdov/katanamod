@@ -1,5 +1,6 @@
 package com.falanero.katanamod.util;
 
+import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
@@ -32,7 +33,7 @@ public class Souls {
     }
 
     static public void appendTooltipSoulCount(ItemStack stack, List<Text> tooltip){
-        int soulCount = Nbt.getSoulCount(stack);
+        int soulCount = KatanamodItemStackData.getSoulCount(stack);
         int level = getCurrentLevel(soulCount);
         int soulsCurrent = soulCount - getSoulsForLevel(level);
         int soulsNeeded = getSoulsNeeded(level+1);
@@ -41,7 +42,7 @@ public class Souls {
     }
 
     static public void appendTooltipLevel(ItemStack stack, List<Text> tooltip){
-        int level = getCurrentLevel(Nbt.getSoulCount(stack));
+        int level = getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
 
         tooltip.add(Text.translatable("item.katanamod.tooltip_level", level));
     }

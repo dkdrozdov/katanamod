@@ -49,7 +49,7 @@ public class Utility {
             case 23 -> "XXIII";
             case 24 -> "XXIV";
             case 25 -> "XXV";
-            default -> "";
+            default -> Integer.toString(number);
         };
     }
 }

@@ -2,15 +2,15 @@ package com.falanero.katanamod.item.katana;
 
 import com.falanero.katanamod.callback.*;
 import com.falanero.katanamod.item.soulgem.DiamondSoulgemItem;
-import com.falanero.katanamod.registry.Instances;
-import com.falanero.katanamod.util.Nbt;
-import com.falanero.katanamod.util.ability.*;
-import com.falanero.katanamod.util.ability.diamond.FeatherfallDiamondAbility;
-import com.falanero.katanamod.util.ability.diamond.attack.SkyboundDiamondAbility;
-import com.falanero.katanamod.util.ability.diamond.tick.SpringDiamondAbility;
-import com.falanero.katanamod.util.ability.diamond.tick.SwiftnessDiamondAbility;
-import com.falanero.katanamod.util.ability.diamond.consumable.FeatherbladeDiamondAbility;
-import com.falanero.katanamod.util.ability.diamond.consumable.WindbombDiamondAbility;
+import com.falanero.katanamod.registry.items.Instances;
+import com.falanero.katanamod.ability.*;
+import com.falanero.katanamod.ability.diamond.FeatherfallDiamondAbility;
+import com.falanero.katanamod.ability.diamond.attack.SkyboundDiamondAbility;
+import com.falanero.katanamod.ability.diamond.tick.SpringDiamondAbility;
+import com.falanero.katanamod.ability.diamond.tick.SwiftnessDiamondAbility;
+import com.falanero.katanamod.ability.diamond.consumable.FeatherbladeDiamondAbility;
+import com.falanero.katanamod.ability.diamond.consumable.WindbombDiamondAbility;
+import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -94,7 +94,7 @@ public class DiamondKatanaItem extends KatanaItem {
 
     private TypedActionResult<Float> onGetAirStrafingSpeed(float airStrafingSpeed, LivingEntity entity) {
         if (entity instanceof PlayerEntity player && isHeldBy(player, null)) {
-            int itemLevel = getCurrentLevel(Nbt.getSoulCount(getKatanaStack(player, null)));
+            int itemLevel = getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(player, null)));
             return SwiftnessDiamondAbility.onGetAirStrafingSpeed(airStrafingSpeed, player, itemLevel);
         }
         return new TypedActionResult<>(ActionResult.FAIL, airStrafingSpeed);
@@ -102,7 +102,7 @@ public class DiamondKatanaItem extends KatanaItem {
 
     private TypedActionResult<Integer> onComputeFallDamage(int fallDamage, float fallDistance, float damageMultiplier, LivingEntity entity) {
         if (entity instanceof PlayerEntity player && isHeldBy(player, null)) {
-            int itemLevel = getCurrentLevel(Nbt.getSoulCount(getKatanaStack(player, null)));
+            int itemLevel = getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(player, null)));
             return FeatherfallDiamondAbility.onComputeFallDamage(fallDamage, fallDistance, damageMultiplier, entity, itemLevel);
         }
         return new TypedActionResult<>(ActionResult.FAIL, fallDamage);

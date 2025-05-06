@@ -1,7 +1,8 @@
 package com.falanero.katanamod.client;
 
 import com.falanero.katanamod.KatanaMod;
-import com.falanero.katanamod.registry.Instances;
+import com.falanero.katanamod.registry.IDs;
+import com.falanero.katanamod.registry.enities.Instances;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -11,13 +12,14 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.UUID;
+import static com.falanero.katanamod.registry.IDs.SKYBOUND_S2C_PACKET_ID;
+import static com.falanero.katanamod.registry.IDs.WINDBOMB_S2C_PACKET_ID;
 
 public class KatanaModClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         EntityRendererRegistry.register(Instances.FEATHERBLADE_ENTITY, FlyingItemEntityRenderer::new);
-        ClientPlayNetworking.registerGlobalReceiver(KatanaMod.SKYBOUND_S2C_PACKET_ID, (client, handler, buf, responseSender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(SKYBOUND_S2C_PACKET_ID, (client, handler, buf, responseSender) -> {
             assert client.world != null;
             BlockPos blockPos = buf.readBlockPos();
 //            double x = buf.readDouble();
@@ -38,7 +40,7 @@ public class KatanaModClient implements ClientModInitializer {
 //                KatanaMod.LOGGER.info("SKYBOUND_S2C_PACKET_ID : {}, {}, {}", blockPos.getX(), blockPos.getY(), blockPos.getZ());
             });
         });
-        ClientPlayNetworking.registerGlobalReceiver(KatanaMod.WINDBOMB_S2C_PACKET_ID, (client, handler, buf, responseSender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(WINDBOMB_S2C_PACKET_ID, (client, handler, buf, responseSender) -> {
             assert client.world != null;
             BlockPos blockPos = buf.readBlockPos();
             client.execute(()->{

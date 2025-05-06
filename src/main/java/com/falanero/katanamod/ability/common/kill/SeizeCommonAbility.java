@@ -1,8 +1,8 @@
-package com.falanero.katanamod.util.ability.common.kill;
+package com.falanero.katanamod.ability.common.kill;
 
-import com.falanero.katanamod.util.Nbt;
 import com.falanero.katanamod.util.Souls;
-import com.falanero.katanamod.util.ability.KillAbility;
+import com.falanero.katanamod.ability.KillAbility;
+import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -16,9 +16,9 @@ import static com.falanero.katanamod.util.Souls.getSoulsForLevel;
 public class SeizeCommonAbility implements KillAbility {
     @Override
     public void apply(LivingEntity killer, ItemStack stack) {
-        int soulCount = Nbt.getSoulCount(stack) + 1;
+        int soulCount = KatanamodItemStackData.getSoulCount(stack) + 1;
         int level = getCurrentLevel(soulCount);
-        Nbt.setSoulCount(stack, soulCount);
+        KatanamodItemStackData.setSoulCount(stack, soulCount);
         ServerPlayerEntity serverPlayerEntity = Objects.requireNonNull(killer.getServer()).getPlayerManager().getPlayer(killer.getUuid());
         assert serverPlayerEntity != null;
         serverPlayerEntity.sendMessage(Text.translatable("item.katanamod.tooltip_souls",

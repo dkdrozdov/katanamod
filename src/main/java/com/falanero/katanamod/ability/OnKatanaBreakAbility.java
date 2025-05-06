@@ -1,4 +1,4 @@
-package com.falanero.katanamod.util.ability;
+package com.falanero.katanamod.ability;
 
 import com.falanero.katanamod.item.katana.KatanaItem;
 import net.minecraft.entity.LivingEntity;

@@ -1,7 +1,7 @@
 package com.falanero.katanamod.item.soulgem;
 
-import com.falanero.katanamod.util.Nbt;
 import com.falanero.katanamod.util.Souls;
+import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,6 +24,6 @@ public class SoulGemItem extends Item {
 
     @Override
     public Text getName(ItemStack stack) {
-        return Text.translatable(this.getTranslationKey(stack), Souls.getCurrentLevel(Nbt.getSoulCount(stack)));
+        return Text.translatable(this.getTranslationKey(stack), Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack)));
     }
 }
