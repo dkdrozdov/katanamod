@@ -47,6 +47,6 @@ public class Items {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
                 .register((itemGroup) -> itemGroup.add(DIAMOND_KATANA));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
-                .register((itemGroup) -> itemGroup.add(DIAMOND_KATANA));
+                .register((itemGroup) -> itemGroup.add(DIAMOND_SOULGEM));
     }
 }

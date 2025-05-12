@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "katanamod:iron_katana"
+    "katanamod:iron_katana",
+    "katanamod:diamond_katana"
   ]
 }
