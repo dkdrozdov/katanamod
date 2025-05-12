@@ -1,7 +1,13 @@
 package com.falanero.katanamod.item.katana;
 
 import com.falanero.katanamod.ability.*;
+import com.falanero.katanamod.callback.OnAttackCallback;
+import com.falanero.katanamod.util.Souls;
+import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
+import net.fabricmc.fabric.api.event.Event;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
@@ -11,24 +17,25 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class KatanaItem extends Item {
 
     public KatanaItem(int attackDamage, float attackSpeed, Item.Settings settings) {
         super(settings.sword(ToolMaterial.IRON, attackDamage, attackSpeed));
 
-//        registerAbilities();
+        registerAbilities();
     }
 
-//    private void registerAbilities() {
-//        registerAttackAbilities(OnAttackCallback.ON_SWEEPING_ATTACK_CALLBACK_EVENT, getOnSweepAttackAbilities());
-//        registerAttackAbilities(OnAttackCallback.ON_CRIT_ATTACK_CALLBACK_EVENT, getOnCritAttackAbilities());
-//        registerAttackAbilities(OnAttackCallback.ON_SPRINT_ATTACK_CALLBACK_EVENT, getOnSprintAttackAbilities());
+    private void registerAbilities() {
+        registerAttackAbilities(OnAttackCallback.ON_SWEEPING_ATTACK_CALLBACK_EVENT, getOnSweepAttackAbilities());
+        registerAttackAbilities(OnAttackCallback.ON_CRIT_ATTACK_CALLBACK_EVENT, getOnCritAttackAbilities());
+        registerAttackAbilities(OnAttackCallback.ON_SPRINT_ATTACK_CALLBACK_EVENT, getOnSprintAttackAbilities());
 //        registerOnKatanaBreakAbilities();
 //        registerOnKilledEntityAbilities();
 //        registerTickAbilities();
 //        registerConsumables();
-//    }
+    }
 
 //    private void registerOnKatanaBreakAbilities() {
 //        List<OnKatanaBreakAbility> abilities = getOnKatanaBreakAbilities();
@@ -81,18 +88,18 @@ public abstract class KatanaItem extends Item {
 //        });
 //    }
 //
-//    private void registerAttackAbilities(Event<OnAttackCallback> event, List<AttackAbility> abilities) {
-//        event.register((Entity target, PlayerEntity attacker) -> {
-//            ItemStack stack = getKatanaStack(attacker, Hand.MAIN_HAND);
-//            if ((target == null) || (attacker == null) || (stack == null))
-//                return;
-//
-//            int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
-//            abilities.stream().filter(Objects::nonNull).forEach(ability -> {
-//                ability.apply(stack, (LivingEntity) target, attacker, level);
-//            });
-//        });
-//    }
+    private void registerAttackAbilities(Event<OnAttackCallback> event, List<AttackAbility> abilities) {
+        event.register((Entity target, PlayerEntity attacker) -> {
+            ItemStack stack = getKatanaStack(attacker, Hand.MAIN_HAND);
+            if ((target == null) || (attacker == null) || (stack == null))
+                return;
+
+            int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
+            abilities.stream().filter(Objects::nonNull).forEach(ability -> {
+                ability.apply(stack, (LivingEntity) target, attacker, level);
+            });
+        });
+    }
 
     /**
      * @param hand hand to check. If {@code null}, checks both hands.
@@ -141,14 +148,14 @@ public abstract class KatanaItem extends Item {
 //    @NotNull
 //    protected abstract Map<Item, ConsumableAbility> getConsumableAbilities();
 //
-//    @NotNull
-//    protected abstract List<AttackAbility> getOnSweepAttackAbilities();
-//
-//    @NotNull
-//    protected abstract List<AttackAbility> getOnCritAttackAbilities();
-//
-//    @NotNull
-//    protected abstract List<AttackAbility> getOnSprintAttackAbilities();
+    @NotNull
+    protected abstract List<AttackAbility> getOnSweepAttackAbilities();
+
+    @NotNull
+    protected abstract List<AttackAbility> getOnCritAttackAbilities();
+
+    @NotNull
+    protected abstract List<AttackAbility> getOnSprintAttackAbilities();
 //
 //    @NotNull
 //    protected abstract List<AttackAbility> getPostAttackAbilities();

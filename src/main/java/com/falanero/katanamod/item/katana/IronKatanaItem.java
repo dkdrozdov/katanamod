@@ -1,6 +1,11 @@
 package com.falanero.katanamod.item.katana;
 
+import com.falanero.katanamod.ability.AttackAbility;
 import net.minecraft.item.Item;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
 
 public class IronKatanaItem extends KatanaItem {
 
@@ -13,20 +18,20 @@ public class IronKatanaItem extends KatanaItem {
 //        return Collections.emptyMap();
 //    }
 //
-//    @Override
-//    protected @NotNull List<AttackAbility> getOnSweepAttackAbilities() {
-//        return Collections.emptyList();
-//    }
-//
-//    @Override
-//    protected @NotNull List<AttackAbility> getOnCritAttackAbilities() {
-//        return Collections.emptyList();
-//    }
-//
-//    @Override
-//    protected @NotNull List<AttackAbility> getOnSprintAttackAbilities() {
-//        return Collections.emptyList();
-//    }
+    @Override
+    protected @NotNull List<AttackAbility> getOnSweepAttackAbilities() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    protected @NotNull List<AttackAbility> getOnCritAttackAbilities() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    protected @NotNull List<AttackAbility> getOnSprintAttackAbilities() {
+        return Collections.emptyList();
+    }
 //
 //    @Override
 //    protected @NotNull List<AttackAbility> getPostAttackAbilities() {

@@ -1,5 +1,11 @@
 package com.falanero.katanamod.item.katana;
 
+import com.falanero.katanamod.ability.AttackAbility;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
+
 public class DiamondKatanaItem extends KatanaItem {
 
     public DiamondKatanaItem(int attackDamage, float attackSpeed, Settings settings) {
@@ -16,20 +22,20 @@ public class DiamondKatanaItem extends KatanaItem {
 //                FEATHER, FeatherbladeDiamondAbility.getAbility());
 //    }
 //
-//    @Override
-//    protected @NotNull List<AttackAbility> getOnSweepAttackAbilities() {
-//        return Collections.emptyList();
-//    }
-//
-//    @Override
-//    protected @NotNull List<AttackAbility> getOnCritAttackAbilities() {
-//        return Collections.emptyList();
-//    }
-//
-//    @Override
-//    protected @NotNull List<AttackAbility> getOnSprintAttackAbilities() {
-//        return Collections.emptyList();
-//    }
+    @Override
+    protected @NotNull List<AttackAbility> getOnSweepAttackAbilities() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    protected @NotNull List<AttackAbility> getOnCritAttackAbilities() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    protected @NotNull List<AttackAbility> getOnSprintAttackAbilities() {
+        return Collections.emptyList();
+    }
 
 //    @Override
 //    protected @NotNull List<AttackAbility> getPostAttackAbilities() {

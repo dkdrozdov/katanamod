@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "katanamod:iron_katana",
+    "minecraft:diamond"
+  ],
+  "result": {
+    "count": 1,
+    "id": "katanamod:diamond_katana"
+  }
+}
