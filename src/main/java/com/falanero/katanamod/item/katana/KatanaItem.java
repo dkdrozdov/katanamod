@@ -1,113 +1,98 @@
 package com.falanero.katanamod.item.katana;
 
-import com.falanero.katanamod.callback.*;
-import com.falanero.katanamod.util.Souls;
 import com.falanero.katanamod.ability.*;
-import com.falanero.katanamod.ability.common.kill.SeizeCommonAbility;
-import com.falanero.katanamod.ability.common.kill.ShatterCommonAbility;
-import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
-import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ToolMaterial;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-import static com.falanero.katanamod.util.Souls.*;
-
-public abstract class KatanaItem extends SwordItem {
+public abstract class KatanaItem extends Item {
 
     public KatanaItem(int attackDamage, float attackSpeed, Item.Settings settings) {
-        super(ToolMaterials.IRON, attackDamage, attackSpeed, settings);
+        super(settings.sword(ToolMaterial.IRON, attackDamage, attackSpeed));
 
-        registerAbilities();
+//        registerAbilities();
     }
 
-    private void registerAbilities() {
-        registerAttackAbilities(OnAttackCallback.ON_SWEEPING_ATTACK_CALLBACK_EVENT, getOnSweepAttackAbilities());
-        registerAttackAbilities(OnAttackCallback.ON_CRIT_ATTACK_CALLBACK_EVENT, getOnCritAttackAbilities());
-        registerAttackAbilities(OnAttackCallback.ON_SPRINT_ATTACK_CALLBACK_EVENT, getOnSprintAttackAbilities());
-        registerOnKatanaBreakAbilities();
-        registerOnKilledEntityAbilities();
-        registerTickAbilities();
-        registerConsumables();
-    }
+//    private void registerAbilities() {
+//        registerAttackAbilities(OnAttackCallback.ON_SWEEPING_ATTACK_CALLBACK_EVENT, getOnSweepAttackAbilities());
+//        registerAttackAbilities(OnAttackCallback.ON_CRIT_ATTACK_CALLBACK_EVENT, getOnCritAttackAbilities());
+//        registerAttackAbilities(OnAttackCallback.ON_SPRINT_ATTACK_CALLBACK_EVENT, getOnSprintAttackAbilities());
+//        registerOnKatanaBreakAbilities();
+//        registerOnKilledEntityAbilities();
+//        registerTickAbilities();
+//        registerConsumables();
+//    }
 
-    private void registerOnKatanaBreakAbilities() {
-        List<OnKatanaBreakAbility> abilities = getOnKatanaBreakAbilities();
+//    private void registerOnKatanaBreakAbilities() {
+//        List<OnKatanaBreakAbility> abilities = getOnKatanaBreakAbilities();
+//
+//        ToolBreakCallback.EVENT.register((LivingEntity entity) -> {
+//            ItemStack stack = getKatanaStack(entity, Hand.MAIN_HAND);
+//            OnKatanaBreakAbility shatterAbility = new ShatterCommonAbility();
+//
+//            if ((stack != null) && !entity.world.isClient()) {
+//                shatterAbility.apply(entity, stack, this);
+//                abilities.stream().filter(Objects::nonNull).forEach(ability -> {
+//                    ability.apply(entity, stack, this);
+//                });
+//            }
+//        });
+//    }
 
-        ToolBreakCallback.EVENT.register((LivingEntity entity) -> {
-            ItemStack stack = getKatanaStack(entity, Hand.MAIN_HAND);
-            OnKatanaBreakAbility shatterAbility = new ShatterCommonAbility();
-
-            if ((stack != null) && !entity.world.isClient()) {
-                shatterAbility.apply(entity, stack, this);
-                abilities.stream().filter(Objects::nonNull).forEach(ability -> {
-                    ability.apply(entity, stack, this);
-                });
-            }
-        });
-    }
-
-    private void registerOnKilledEntityAbilities() {
-        KillAbility seizeAbility = hasSeizeAbility() ? new SeizeCommonAbility() : null;
-        List<KillAbility> abilities = getKillAbilities();
-
-        OnKilledByCallback.EVENT.register((LivingEntity killer) -> {
-            if (killer == null)
-                return;
-
-            ItemStack stack = getPrioritizedKatanaStack(killer);
-
-            if ((stack != null) && !killer.world.isClient) {
-                if (seizeAbility != null) seizeAbility.apply(killer, stack);
-                abilities.stream().filter(Objects::nonNull).forEach(ability -> {
-                    ability.apply(killer, stack);
-                });
-            }
-        });
-    }
-
-    private void registerTickAbilities() {
-        List<TickAbility> abilities = getTickAbilities();
-
-        PlayerEntityTickCallback.EVENT.register((PlayerEntity player) -> {
-            if (player == null) return;
-
-            ItemStack stack = getKatanaStack(player, null);
-            if (stack != null) {
-                int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
-                abilities.stream().filter(Objects::nonNull).forEach(ability -> {
-                    ability.apply(player, level);
-                });
-            }
-        });
-    }
-
-    private void registerAttackAbilities(Event<OnAttackCallback> event, List<AttackAbility> abilities) {
-        event.register((Entity target, PlayerEntity attacker) -> {
-            ItemStack stack = getKatanaStack(attacker, Hand.MAIN_HAND);
-            if ((target == null) || (attacker == null) || (stack == null))
-                return;
-
-            int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
-            abilities.stream().filter(Objects::nonNull).forEach(ability -> {
-                ability.apply(stack, (LivingEntity) target, attacker, level);
-            });
-        });
-    }
+//    private void registerOnKilledEntityAbilities() {
+//        KillAbility seizeAbility = hasSeizeAbility() ? new SeizeCommonAbility() : null;
+//        List<KillAbility> abilities = getKillAbilities();
+//
+//        OnKilledByCallback.EVENT.register((LivingEntity killer) -> {
+//            if (killer == null)
+//                return;
+//
+//            ItemStack stack = getPrioritizedKatanaStack(killer);
+//
+//            if ((stack != null) && !killer.world.isClient) {
+//                if (seizeAbility != null) seizeAbility.apply(killer, stack);
+//                abilities.stream().filter(Objects::nonNull).forEach(ability -> {
+//                    ability.apply(killer, stack);
+//                });
+//            }
+//        });
+//    }
+//
+//    private void registerTickAbilities() {
+//        List<TickAbility> abilities = getTickAbilities();
+//
+//        PlayerEntityTickCallback.EVENT.register((PlayerEntity player) -> {
+//            if (player == null) return;
+//
+//            ItemStack stack = getKatanaStack(player, null);
+//            if (stack != null) {
+//                int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
+//                abilities.stream().filter(Objects::nonNull).forEach(ability -> {
+//                    ability.apply(player, level);
+//                });
+//            }
+//        });
+//    }
+//
+//    private void registerAttackAbilities(Event<OnAttackCallback> event, List<AttackAbility> abilities) {
+//        event.register((Entity target, PlayerEntity attacker) -> {
+//            ItemStack stack = getKatanaStack(attacker, Hand.MAIN_HAND);
+//            if ((target == null) || (attacker == null) || (stack == null))
+//                return;
+//
+//            int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
+//            abilities.stream().filter(Objects::nonNull).forEach(ability -> {
+//                ability.apply(stack, (LivingEntity) target, attacker, level);
+//            });
+//        });
+//    }
 
     /**
      * @param hand hand to check. If {@code null}, checks both hands.
@@ -153,99 +138,98 @@ public abstract class KatanaItem extends SwordItem {
     }
 
 
-    @NotNull
-    protected abstract Map<Item, ConsumableAbility> getConsumableAbilities();
+//    @NotNull
+//    protected abstract Map<Item, ConsumableAbility> getConsumableAbilities();
+//
+//    @NotNull
+//    protected abstract List<AttackAbility> getOnSweepAttackAbilities();
+//
+//    @NotNull
+//    protected abstract List<AttackAbility> getOnCritAttackAbilities();
+//
+//    @NotNull
+//    protected abstract List<AttackAbility> getOnSprintAttackAbilities();
+//
+//    @NotNull
+//    protected abstract List<AttackAbility> getPostAttackAbilities();
+//
+//    @NotNull
+//    protected abstract List<TickAbility> getTickAbilities();
+//
+//    @NotNull
+//    protected abstract List<KillAbility> getKillAbilities();
+//
+//    @NotNull
+//    protected abstract List<OnKatanaBreakAbility> getOnKatanaBreakAbilities();
+//
+//    @NotNull
+//    public abstract Item getShatterItem();
+//
+//    protected abstract boolean hasSeizeAbility();
+//
+//    public abstract void appendTooltipExtra(ItemStack itemStack, List<Text> tooltip);
+//
+//    protected abstract void appendInlaidKatanaDescription(List<Text> tooltip);
 
-    @NotNull
-    protected abstract List<AttackAbility> getOnSweepAttackAbilities();
+//    private void registerConsumables() {
+//        OnItemUseCallback.ON_ITEM_USE_CALLBACK.register((world, user, hand) -> {
+//            Item usedItem = user.getStackInHand(hand).getItem();
+//            ConsumableAbility ability = getConsumableAbilities().get(usedItem);
+//            if ((ability != null) && (isHeldBy(user, null))){
+//                int itemLevel = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(user, null)));
+//                if (ability.apply(world, user, hand, itemLevel))
+//                    return ActionResult.CONSUME;
+//            }
+//            return ActionResult.PASS;
+//        });
+//    }
+//
+//    @Override
+//    public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+////        if ((target == null) || (attacker == null) || (stack == null))
+////            return false;
+//
+//        int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
+//        List<AttackAbility> abilities = getPostAttackAbilities();
+//        abilities.stream().filter(Objects::nonNull).forEach(ability -> {
+//            ability.apply(stack, target, attacker, level);
+//        });
+//
+//        stack.damage(1, attacker, e -> {
+//            e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
+//            ToolBreakCallback.EVENT.invoker().notify(e);
+//        });
+//    }
+//
+//    @Override
+//    public boolean postMine(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity miner) {
+//        if (state.getHardness(world, pos) != 0.0f) {
+//            stack.damage(2, miner, e -> {
+//                e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
+//                ToolBreakCallback.EVENT.invoker().notify(e);
+//            });
+//        }
+//        return true;
+//    }
 
-    @NotNull
-    protected abstract List<AttackAbility> getOnCritAttackAbilities();
-
-    @NotNull
-    protected abstract List<AttackAbility> getOnSprintAttackAbilities();
-
-    @NotNull
-    protected abstract List<AttackAbility> getPostAttackAbilities();
-
-    @NotNull
-    protected abstract List<TickAbility> getTickAbilities();
-
-    @NotNull
-    protected abstract List<KillAbility> getKillAbilities();
-
-    @NotNull
-    protected abstract List<OnKatanaBreakAbility> getOnKatanaBreakAbilities();
-
-    @NotNull
-    public abstract Item getShatterItem();
-
-    protected abstract boolean hasSeizeAbility();
-
-    public abstract void appendTooltipExtra(ItemStack itemStack, List<Text> tooltip);
-
-    protected abstract void appendInlaidKatanaDescription(List<Text> tooltip);
-
-    private void registerConsumables() {
-        OnItemUseCallback.ON_ITEM_USE_CALLBACK.register((world, user, hand) -> {
-            Item usedItem = user.getStackInHand(hand).getItem();
-            ConsumableAbility ability = getConsumableAbilities().get(usedItem);
-            if ((ability != null) && (isHeldBy(user, null))){
-                int itemLevel = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(user, null)));
-                if (ability.apply(world, user, hand, itemLevel))
-                    return ActionResult.CONSUME;
-            }
-            return ActionResult.PASS;
-        });
-    }
-
-    @Override
-    public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if ((target == null) || (attacker == null) || (stack == null))
-            return false;
-
-        int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
-        List<AttackAbility> abilities = getPostAttackAbilities();
-        abilities.stream().filter(Objects::nonNull).forEach(ability -> {
-            ability.apply(stack, target, attacker, level);
-        });
-
-        stack.damage(1, attacker, e -> {
-            e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
-            ToolBreakCallback.EVENT.invoker().notify(e);
-        });
-        return true;
-    }
-
-    @Override
-    public boolean postMine(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity miner) {
-        if (state.getHardness(world, pos) != 0.0f) {
-            stack.damage(2, miner, e -> {
-                e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
-                ToolBreakCallback.EVENT.invoker().notify(e);
-            });
-        }
-        return true;
-    }
-
-    @Override
-    public Text getName(ItemStack stack) {
-        return Text.translatable(this.getTranslationKey(stack), getCurrentLevel(KatanamodItemStackData.getSoulCount(stack)));
-    }
-
-    @Override
-    public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
-        if (Screen.hasShiftDown()) {
-            appendTooltipExtra(itemStack, tooltip);
-        } else {
-            //Katana description
-            tooltip.add(Text.translatable("item.katanamod.katana_item.tooltip_line_1"));
-            //Inlaid katana description
-            appendInlaidKatanaDescription(tooltip);
-            //Soul count
-            Souls.appendTooltipSoulCount(itemStack, tooltip);
-            //More info
-            tooltip.add(Text.translatable("item.katanamod.tooltip_display_more_info").formatted(Formatting.GRAY));
-        }
-    }
+//    @Override
+//    public Text getName(ItemStack stack) {
+//        return Text.translatable(this.getTranslationKey(stack), getCurrentLevel(KatanamodItemStackData.getSoulCount(stack)));
+//    }
+//
+//    @Override
+//    public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipType tooltipContext) {
+//        if (Screen.hasShiftDown()) {
+//            appendTooltipExtra(itemStack, tooltip);
+//        } else {
+//            //Katana description
+//            tooltip.add(Text.translatable("item.katanamod.katana_item.tooltip_line_1"));
+//            //Inlaid katana description
+//            appendInlaidKatanaDescription(tooltip);
+//            //Soul count
+//            Souls.appendTooltipSoulCount(itemStack, tooltip);
+//            //More info
+//            tooltip.add(Text.translatable("item.katanamod.tooltip_display_more_info").formatted(Formatting.GRAY));
+//        }
+//    }
 }
