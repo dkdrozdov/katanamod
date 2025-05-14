@@ -1,10 +1,19 @@
 package com.falanero.katanamod.item.katana;
 
+import com.falanero.katanamod.KatanaMod;
 import com.falanero.katanamod.ability.AttackAbility;
+import com.falanero.katanamod.ability.ConsumableAbility;
+import com.falanero.katanamod.ability.KillAbility;
+import com.falanero.katanamod.ability.TickAbility;
+import com.falanero.katanamod.ability.diamond.tick.SpringDiamondAbility;
+import com.falanero.katanamod.ability.diamond.tick.SwiftnessDiamondAbility;
+import net.minecraft.item.Item;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 public class DiamondKatanaItem extends KatanaItem {
 
@@ -14,45 +23,68 @@ public class DiamondKatanaItem extends KatanaItem {
 //        OnGetAirStrafingSpeedCallback.ON_GET_AIR_STRAFING_SPEED_CALLBACK_EVENT.register(this::onGetAirStrafingSpeed);
 //        OnComputeFallDamage.ON_COMPUTE_FALL_DAMAGE_CALLBACK_EVENT.register(this::onComputeFallDamage);
     }
-//
-//    @Override
-//    public @NotNull Map<Item, ConsumableAbility> getConsumableAbilities() {
-//        return Map.of(
+
+    @Override
+    public @NotNull Map<Predicate<Item>, ConsumableAbility> getConsumableAbilities() {
+        return Map.of(
+                (item) -> true, (world, user, hand, level) -> {
+                    KatanaMod.LOGGER.info(String.format("[katanamod:OnItemUseCallback]/Event raised: Item Usage (%s used %s)",
+                            user.getName().getString(), user.getStackInHand(hand).getItem().getName().getString()));
+                    return false;
+                }
 //                PHANTOM_MEMBRANE, WindbombDiamondAbility.getAbility(),
-//                FEATHER, FeatherbladeDiamondAbility.getAbility());
-//    }
-//
+//                FEATHER, FeatherbladeDiamondAbility.getAbility()
+        );
+    }
+
     @Override
     protected @NotNull List<AttackAbility> getOnSweepAttackAbilities() {
-        return Collections.emptyList();
+        return List.of((stack, target, attacker, level) -> {
+            KatanaMod.LOGGER.info(String.format("Event raised: Sweeping Attack (%s attacked %s)",
+                    attacker.getName().getString(), target.getName().getString()));
+        });
     }
 
     @Override
     protected @NotNull List<AttackAbility> getOnCritAttackAbilities() {
-        return Collections.emptyList();
+        return List.of((stack, target, attacker, level) -> {
+            KatanaMod.LOGGER.info(String.format("Event raised: Crit Attack (%s attacked %s)",
+                    attacker.getName().getString(), target.getName().getString()));
+        });
     }
 
     @Override
     protected @NotNull List<AttackAbility> getOnSprintAttackAbilities() {
+        return List.of((stack, target, attacker, level) -> {
+            KatanaMod.LOGGER.info(String.format("Event raised: Sprint Attack (%s attacked %s)",
+                    attacker.getName().getString(), target.getName().getString()));
+        });
+    }
+
+        @Override
+    protected @NotNull List<AttackAbility> getPostAttackAbilities() {
+        return List.of(
+                (stack, target, attacker, itemLevel) -> {
+                    KatanaMod.LOGGER.info(String.format("Event raised: Post Attack (%s attacked %s)",
+                            attacker.getName().getString(), target.getName().getString()));
+                }
+//                SkyboundDiamondAbility.getAbility()
+
+        );
+    }
+
+    @Override
+    protected @NotNull List<TickAbility> getTickAbilities() {
+        return List.of(SwiftnessDiamondAbility.getAbility(),
+                SpringDiamondAbility.getAbility()
+        );
+    }
+
+    @Override
+    protected @NotNull List<KillAbility> getKillAbilities() {
         return Collections.emptyList();
     }
 
-//    @Override
-//    protected @NotNull List<AttackAbility> getPostAttackAbilities() {
-//        return List.of(SkyboundDiamondAbility.getAbility());
-//    }
-//
-//    @Override
-//    protected @NotNull List<TickAbility> getTickAbilities() {
-//        return List.of(SwiftnessDiamondAbility.getAbility(),
-//                SpringDiamondAbility.getAbility());
-//    }
-//
-//    @Override
-//    protected @NotNull List<KillAbility> getKillAbilities() {
-//        return Collections.emptyList();
-//    }
-//
 //    @Override
 //    protected @NotNull List<OnKatanaBreakAbility> getOnKatanaBreakAbilities() {
 //        return Collections.emptyList();
@@ -62,12 +94,12 @@ public class DiamondKatanaItem extends KatanaItem {
 //    public @NotNull Item getShatterItem() {
 //        return Items.DIAMOND_SOULGEM;
 //    }
-//
-//    @Override
-//    protected boolean hasSeizeAbility() {
-//        return true;
-//    }
-//
+
+    @Override
+    protected boolean hasSeizeAbility() {
+        return true;
+    }
+
 //    private TypedActionResult<Float> onGetAirStrafingSpeed(float airStrafingSpeed, LivingEntity entity) {
 //        if (entity instanceof PlayerEntity player && isHeldBy(player, null)) {
 //            int itemLevel = getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(player, null)));

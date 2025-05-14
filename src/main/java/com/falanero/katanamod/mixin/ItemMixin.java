@@ -6,7 +6,6 @@
 //import net.minecraft.item.ItemStack;
 //import net.minecraft.util.ActionResult;
 //import net.minecraft.util.Hand;
-//import net.minecraft.util.TypedActionResult;
 //import net.minecraft.world.World;
 //import org.spongepowered.asm.mixin.Mixin;
 //import org.spongepowered.asm.mixin.injection.At;
@@ -16,17 +15,16 @@
 //@Mixin(Item.class)
 //public class ItemMixin {
 //    @Inject(at = @At(value = "RETURN", ordinal = 2), method = "use", cancellable = true)
-//    private void onUseInvoke(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir){
+//    private void onUseInvoke(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<ActionResult> cir){
 //        ActionResult actionResult = OnItemUseCallback.ON_ITEM_USE_CALLBACK.invoker().use(world, user, hand);
-//        TypedActionResult<ItemStack> stackResult;
-//        ItemStack itemStack = user.getStackInHand(hand);
+//        ActionResult stackResult;
 //
 //        if(actionResult == ActionResult.CONSUME)
-//            stackResult = TypedActionResult.consume(itemStack);
+//            stackResult = ActionResult.CONSUME;
 //        else if(actionResult == ActionResult.PASS)
-//            stackResult = TypedActionResult.pass(user.getStackInHand(hand));
+//            stackResult = ActionResult.PASS;
 //        else
-//            stackResult = TypedActionResult.fail(itemStack);
+//            stackResult = ActionResult.FAIL;
 //
 //        cir.setReturnValue(stackResult);
 //    }
