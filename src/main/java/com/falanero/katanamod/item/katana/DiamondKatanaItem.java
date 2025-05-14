@@ -7,7 +7,12 @@ import com.falanero.katanamod.ability.KillAbility;
 import com.falanero.katanamod.ability.TickAbility;
 import com.falanero.katanamod.ability.diamond.tick.SpringDiamondAbility;
 import com.falanero.katanamod.ability.diamond.tick.SwiftnessDiamondAbility;
+import com.falanero.katanamod.callback.OnGetAirStrafingSpeedCallback;
+import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -15,12 +20,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import static com.falanero.katanamod.util.Souls.getCurrentLevel;
+
 public class DiamondKatanaItem extends KatanaItem {
 
     public DiamondKatanaItem(int attackDamage, float attackSpeed, Settings settings) {
         super(attackDamage, attackSpeed, settings);
 //
-//        OnGetAirStrafingSpeedCallback.ON_GET_AIR_STRAFING_SPEED_CALLBACK_EVENT.register(this::onGetAirStrafingSpeed);
+        OnGetAirStrafingSpeedCallback.ON_GET_AIR_STRAFING_SPEED_CALLBACK_EVENT.register(this::onGetAirStrafingSpeed);
 //        OnComputeFallDamage.ON_COMPUTE_FALL_DAMAGE_CALLBACK_EVENT.register(this::onComputeFallDamage);
     }
 
@@ -100,14 +107,14 @@ public class DiamondKatanaItem extends KatanaItem {
         return true;
     }
 
-//    private TypedActionResult<Float> onGetAirStrafingSpeed(float airStrafingSpeed, LivingEntity entity) {
-//        if (entity instanceof PlayerEntity player && isHeldBy(player, null)) {
-//            int itemLevel = getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(player, null)));
-//            return SwiftnessDiamondAbility.onGetAirStrafingSpeed(airStrafingSpeed, player, itemLevel);
-//        }
-//        return new TypedActionResult<>(ActionResult.FAIL, airStrafingSpeed);
-//    }
-//
+    private Pair<Boolean, Float> onGetAirStrafingSpeed(float originalSpeed, PlayerEntity entity) {
+        if (entity instanceof PlayerEntity player && isHeldBy(player, null)) {
+            int itemLevel = getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(player, null)));
+            return SwiftnessDiamondAbility.onGetAirStrafingSpeed(originalSpeed, player, itemLevel);
+        }
+        return new ImmutablePair<>(false, originalSpeed);
+    }
+
 //    private TypedActionResult<Integer> onComputeFallDamage(int fallDamage, float fallDistance, float damageMultiplier, LivingEntity entity) {
 //        if (entity instanceof PlayerEntity player && isHeldBy(player, null)) {
 //            int itemLevel = getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(player, null)));

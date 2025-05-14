@@ -7,6 +7,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
@@ -27,13 +29,13 @@ public class SwiftnessDiamondAbility {
 //        tooltip.add(Text.translatable("item.katanamod.diamond_katana.swiftness.description", toRoman(abilityLevel)));
 //    }
 
-//    public static TypedActionResult<Float> onGetAirStrafingSpeed(float airStrafingSpeed, PlayerEntity player, int itemLevel) {
-//            int abilityLevel = getLevel(itemLevel);
-//            if (abilityLevel < 1)
-//                return new TypedActionResult<>(ActionResult.FAIL, airStrafingSpeed);
-//            return new TypedActionResult<>(ActionResult.SUCCESS, Math.max(player.getMovementSpeed() / 8.328f, airStrafingSpeed));
-//    }
-
+    public static Pair<Boolean, Float> onGetAirStrafingSpeed(float original, PlayerEntity player, int itemLevel) {
+        int abilityLevel = getLevel(itemLevel);
+        if (abilityLevel < 1)
+            return new ImmutablePair<>(false, original);
+        var speed = player.getMovementSpeed();
+        return new ImmutablePair<>(true, player.isSprinting() ? speed / 3.846f : speed / 5.0f);
+    }
 
     public static TickAbility getAbility() {
         return SwiftnessDiamondAbility::apply;
