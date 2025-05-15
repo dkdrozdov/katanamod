@@ -38,27 +38,10 @@ public abstract class KatanaItem extends Item {
         registerAttackAbilities(OnAttackCallback.ON_SWEEPING_ATTACK_CALLBACK_EVENT, getOnSweepAttackAbilities());
         registerAttackAbilities(OnAttackCallback.ON_CRIT_ATTACK_CALLBACK_EVENT, getOnCritAttackAbilities());
         registerAttackAbilities(OnAttackCallback.ON_SPRINT_ATTACK_CALLBACK_EVENT, getOnSprintAttackAbilities());
-//        registerOnKatanaBreakAbilities();
         registerOnKilledEntityAbilities();
         registerTickAbilities();
         registerConsumables();
     }
-
-//    private void registerOnKatanaBreakAbilities() {
-//        List<OnKatanaBreakAbility> abilities = getOnKatanaBreakAbilities();
-//
-//        ToolBreakCallback.EVENT.register((LivingEntity entity) -> {
-//            ItemStack stack = getKatanaStack(entity, Hand.MAIN_HAND);
-//            OnKatanaBreakAbility shatterAbility = new ShatterCommonAbility();
-//
-//            if ((stack != null) && !entity.world.isClient()) {
-//                shatterAbility.apply(entity, stack, this);
-//                abilities.stream().filter(Objects::nonNull).forEach(ability -> {
-//                    ability.apply(entity, stack, this);
-//                });
-//            }
-//        });
-//    }
 
     private void registerOnKilledEntityAbilities() {
         KillAbility seizeAbility = hasSeizeAbility() ? new SeizeCommonAbility() : null;
@@ -173,12 +156,6 @@ public abstract class KatanaItem extends Item {
     @NotNull
     protected abstract List<KillAbility> getKillAbilities();
 
-//    @NotNull
-//    protected abstract List<OnKatanaBreakAbility> getOnKatanaBreakAbilities();
-//
-//    @NotNull
-//    public abstract Item getShatterItem();
-
     protected abstract boolean hasSeizeAbility();
 
 //    public abstract void appendTooltipExtra(ItemStack itemStack, List<Text> tooltip);
@@ -217,23 +194,7 @@ public abstract class KatanaItem extends Item {
         abilities.stream().filter(Objects::nonNull).forEach(ability -> {
             ability.apply(stack, target, attacker, level);
         });
-
-//        stack.damage(1, attacker, e -> {
-//            e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
-//            ToolBreakCallback.EVENT.invoker().notify(e);
-//        });
     }
-//
-//    @Override
-//    public boolean postMine(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity miner) {
-//        if (state.getHardness(world, pos) != 0.0f) {
-//            stack.damage(2, miner, e -> {
-//                e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
-//                ToolBreakCallback.EVENT.invoker().notify(e);
-//            });
-//        }
-//        return true;
-//    }
 
 //    @Override
 //    public Text getName(ItemStack stack) {

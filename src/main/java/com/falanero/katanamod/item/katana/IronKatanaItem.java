@@ -52,17 +52,6 @@ public class IronKatanaItem extends KatanaItem {
     protected @NotNull List<KillAbility> getKillAbilities() {
         return Collections.emptyList();
     }
-//
-//    @Override
-//    protected @NotNull List<OnKatanaBreakAbility> getOnKatanaBreakAbilities() {
-//        return Collections.emptyList();
-//    }
-//
-//
-//    @Override
-//    public @NotNull Item getShatterItem() {
-//        return Items.IRON_INGOT;
-//    }
 
     @Override
     protected boolean hasSeizeAbility() {

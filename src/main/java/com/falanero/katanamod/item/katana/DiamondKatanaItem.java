@@ -92,16 +92,6 @@ public class DiamondKatanaItem extends KatanaItem {
         return Collections.emptyList();
     }
 
-//    @Override
-//    protected @NotNull List<OnKatanaBreakAbility> getOnKatanaBreakAbilities() {
-//        return Collections.emptyList();
-//    }
-//
-//    @Override
-//    public @NotNull Item getShatterItem() {
-//        return Items.DIAMOND_SOULGEM;
-//    }
-
     @Override
     protected boolean hasSeizeAbility() {
         return true;
