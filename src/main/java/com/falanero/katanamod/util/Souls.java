@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Souls {
     public static final int SOUL_INCREASE_PER_LEVEL = 100;
@@ -32,13 +33,13 @@ public class Souls {
         return level*SOUL_INCREASE_PER_LEVEL*(level-1)/2;
     }
 
-    static public void appendTooltipSoulCount(ItemStack stack, List<Text> tooltip){
+    static public void appendTooltipSoulCount(ItemStack stack, Consumer<Text> tooltip){
         int soulCount = KatanamodItemStackData.getSoulCount(stack);
         int level = getCurrentLevel(soulCount);
         int soulsCurrent = soulCount - getSoulsForLevel(level);
         int soulsNeeded = getSoulsNeeded(level+1);
 
-        tooltip.add(Text.translatable("item.katanamod.tooltip_souls", soulsCurrent, soulsNeeded));
+        tooltip.accept( Text.translatable("item.katanamod.tooltip_souls", soulsCurrent, soulsNeeded));
     }
 
     static public void appendTooltipLevel(ItemStack stack, List<Text> tooltip){

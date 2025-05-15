@@ -4,12 +4,18 @@ import com.falanero.katanamod.ability.AttackAbility;
 import com.falanero.katanamod.ability.ConsumableAbility;
 import com.falanero.katanamod.ability.KillAbility;
 import com.falanero.katanamod.ability.TickAbility;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class IronKatanaItem extends KatanaItem {
@@ -58,14 +64,14 @@ public class IronKatanaItem extends KatanaItem {
         return false;
     }
 
-//    @Override
-//    public void appendTooltipExtra(ItemStack itemStack, List<Text> tooltip) {
-//
-//    }
-//
-//    @Override
-//    protected void appendInlaidKatanaDescription(List<Text> tooltip) {
-//
-//    }
+    @Override
+    public void appendTooltipExtra(ItemStack itemStack, Consumer<Text> tooltip) {
+
+    }
+
+    @Override
+    protected void appendInlaidKatanaDescription(Consumer<Text> tooltip) {
+
+    }
 
 }

@@ -11,6 +11,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
@@ -20,14 +21,14 @@ public class SwiftnessDiamondAbility {
         return arithmeticProgression(1, 2, 10, itemLevel);
     }
 
-//    public static void appendTooltip(int itemLevel, List<Text> tooltip) {
-//        int abilityLevel = getLevel(itemLevel);
-//        if (abilityLevel < 1)
-//            return;
-//
-//        tooltip.add(Text.translatable("item.katanamod.diamond_katana.swiftness.title", toRoman(abilityLevel)).formatted(Formatting.BOLD));
-//        tooltip.add(Text.translatable("item.katanamod.diamond_katana.swiftness.description", toRoman(abilityLevel)));
-//    }
+    public static void appendTooltip(int itemLevel, Consumer<Text> tooltip) {
+        int abilityLevel = getLevel(itemLevel);
+        if (abilityLevel < 1)
+            return;
+
+        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.swiftness.title", toRoman(abilityLevel)).formatted(Formatting.BOLD));
+        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.swiftness.description", toRoman(abilityLevel)));
+    }
 
     public static Pair<Boolean, Float> onGetAirStrafingSpeed(float original, PlayerEntity player, int itemLevel) {
         int abilityLevel = getLevel(itemLevel);

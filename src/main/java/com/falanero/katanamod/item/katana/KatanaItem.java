@@ -9,22 +9,30 @@ import com.falanero.katanamod.callback.PlayerEntityTickCallback;
 import com.falanero.katanamod.util.Souls;
 import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
 import net.fabricmc.fabric.api.event.Event;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static com.falanero.katanamod.util.Souls.getCurrentLevel;
 
 public abstract class KatanaItem extends Item {
 
@@ -71,7 +79,7 @@ public abstract class KatanaItem extends Item {
 
             ItemStack stack = getKatanaStack(player, null);
             if (stack != null) {
-                int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
+                int level = getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
                 abilities.stream().filter(Objects::nonNull).forEach(ability -> {
                     ability.apply(player, level);
                 });
@@ -85,7 +93,7 @@ public abstract class KatanaItem extends Item {
             if ((target == null) || (attacker == null) || (stack == null))
                 return;
 
-            int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
+            int level = getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
             abilities.stream().filter(Objects::nonNull).forEach(ability -> {
                 ability.apply(stack, (LivingEntity) target, attacker, level);
             });
@@ -158,9 +166,9 @@ public abstract class KatanaItem extends Item {
 
     protected abstract boolean hasSeizeAbility();
 
-//    public abstract void appendTooltipExtra(ItemStack itemStack, List<Text> tooltip);
-//
-//    protected abstract void appendInlaidKatanaDescription(List<Text> tooltip);
+    public abstract void appendTooltipExtra(ItemStack itemStack, Consumer<Text> tooltip);
+
+    protected abstract void appendInlaidKatanaDescription(Consumer<Text> tooltip);
 
     private void registerConsumables() {
         OnItemUseCallback.ON_ITEM_USE_CALLBACK.register((playerEntity, world, hand) -> {
@@ -175,7 +183,7 @@ public abstract class KatanaItem extends Item {
 
             for (var ability : consumableAbilities) {
                 if ((ability != null) && (isHeldBy(playerEntity, null))) {
-                    int itemLevel = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(playerEntity, null)));
+                    int itemLevel = getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(playerEntity, null)));
                     if (ability.apply(world, playerEntity, hand, itemLevel))
                         return ActionResult.CONSUME;
                 }
@@ -189,31 +197,33 @@ public abstract class KatanaItem extends Item {
 //        if ((target == null) || (attacker == null) || (stack == null))
 //            return false;
 
-        int level = Souls.getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
+        int level = getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
         List<AttackAbility> abilities = getPostAttackAbilities();
         abilities.stream().filter(Objects::nonNull).forEach(ability -> {
             ability.apply(stack, target, attacker, level);
         });
     }
 
-//    @Override
-//    public Text getName(ItemStack stack) {
-//        return Text.translatable(this.getTranslationKey(stack), getCurrentLevel(KatanamodItemStackData.getSoulCount(stack)));
-//    }
-//
-//    @Override
-//    public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipType tooltipContext) {
-//        if (Screen.hasShiftDown()) {
-//            appendTooltipExtra(itemStack, tooltip);
-//        } else {
-//            //Katana description
-//            tooltip.add(Text.translatable("item.katanamod.katana_item.tooltip_line_1"));
-//            //Inlaid katana description
-//            appendInlaidKatanaDescription(tooltip);
-//            //Soul count
-//            Souls.appendTooltipSoulCount(itemStack, tooltip);
-//            //More info
-//            tooltip.add(Text.translatable("item.katanamod.tooltip_display_more_info").formatted(Formatting.GRAY));
-//        }
-//    }
+    @Override
+    public void appendTooltip(ItemStack itemStack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+        if (Screen.hasShiftDown()) {
+            appendTooltipExtra(itemStack, textConsumer);
+        } else {
+            //Katana description
+            textConsumer.accept(Text.translatable("item.katanamod.katana_item.tooltip_line_1"));
+            //Inlaid katana description
+            appendInlaidKatanaDescription(textConsumer);
+            //Soul count
+            Souls.appendTooltipSoulCount(itemStack, textConsumer);
+            //More info
+            textConsumer.accept(Text.translatable("item.katanamod.tooltip_display_more_info").formatted(Formatting.GRAY));
+        }
+    }
+
+    @Override
+    public Text getName(ItemStack stack) {
+        return Text.translatable(this.getTranslationKey(), getCurrentLevel(KatanamodItemStackData.getSoulCount(stack)));
+    }
+
+
 }

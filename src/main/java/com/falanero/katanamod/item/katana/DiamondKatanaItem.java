@@ -8,9 +8,15 @@ import com.falanero.katanamod.ability.TickAbility;
 import com.falanero.katanamod.ability.diamond.tick.SpringDiamondAbility;
 import com.falanero.katanamod.ability.diamond.tick.SwiftnessDiamondAbility;
 import com.falanero.katanamod.callback.OnGetAirStrafingSpeedCallback;
+import com.falanero.katanamod.item.soulgem.DiamondSoulgemItem;
 import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static com.falanero.katanamod.util.Souls.getCurrentLevel;
@@ -68,7 +75,7 @@ public class DiamondKatanaItem extends KatanaItem {
         });
     }
 
-        @Override
+    @Override
     protected @NotNull List<AttackAbility> getPostAttackAbilities() {
         return List.of(
                 (stack, target, attacker, itemLevel) -> {
@@ -105,6 +112,7 @@ public class DiamondKatanaItem extends KatanaItem {
         return new ImmutablePair<>(false, originalSpeed);
     }
 
+
 //    private TypedActionResult<Integer> onComputeFallDamage(int fallDamage, float fallDistance, float damageMultiplier, LivingEntity entity) {
 //        if (entity instanceof PlayerEntity player && isHeldBy(player, null)) {
 //            int itemLevel = getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(player, null)));
@@ -131,14 +139,14 @@ public class DiamondKatanaItem extends KatanaItem {
 //        }
 //    }
 //
-//    @Override
-//    public void appendTooltipExtra(ItemStack stack, List<Text> tooltip) {
-//        DiamondSoulgemItem.appendExtra(stack, tooltip);
-//    }
-//
-//    @Override
-//    protected void appendInlaidKatanaDescription(List<Text> tooltip){
-//        tooltip.add(Text.translatable("item.katanamod.diamond_katana.tooltip.soulgem"));
-//        tooltip.add(Text.translatable("item.katanamod.diamond_katana.tooltip.element"));
-//    }
+    @Override
+    public void appendTooltipExtra(ItemStack stack, Consumer<Text> tooltip) {
+        DiamondSoulgemItem.appendExtra(stack, tooltip);
+    }
+
+    @Override
+    protected void appendInlaidKatanaDescription(Consumer<Text> tooltip){
+        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.tooltip.soulgem"));
+        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.tooltip.element"));
+    }
 }

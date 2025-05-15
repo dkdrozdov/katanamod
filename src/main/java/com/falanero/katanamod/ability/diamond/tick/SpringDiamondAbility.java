@@ -9,6 +9,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
@@ -18,13 +19,13 @@ public class SpringDiamondAbility {
         return arithmeticProgression(1, 2, 10, itemLevel);
     }
 
-    public static void appendTooltip(int itemLevel, List<Text> tooltip) {
+    public static void appendTooltip(int itemLevel, Consumer<Text> tooltip) {
         int abilityLevel = getLevel(itemLevel);
         if (abilityLevel < 1)
             return;
 
-        tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability.spring.title", toRoman(abilityLevel)).formatted(Formatting.BOLD));
-        tooltip.add(Text.translatable("item.katanamod.diamond_katana.ability.spring.description", toRoman(abilityLevel)));
+        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.ability.spring.title", toRoman(abilityLevel)).formatted(Formatting.BOLD));
+        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.ability.spring.description", toRoman(abilityLevel)));
     }
 
     public static TickAbility getAbility(){
