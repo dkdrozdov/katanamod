@@ -4,6 +4,7 @@
   "package": "com.falanero.katanamod.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "LivingEntityMixin",
     "PlayerEntityMixin"
   ],
   "client": [

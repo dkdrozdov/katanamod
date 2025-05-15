@@ -5,12 +5,15 @@ import com.falanero.katanamod.ability.AttackAbility;
 import com.falanero.katanamod.ability.ConsumableAbility;
 import com.falanero.katanamod.ability.KillAbility;
 import com.falanero.katanamod.ability.TickAbility;
+import com.falanero.katanamod.ability.diamond.FeatherfallDiamondAbility;
 import com.falanero.katanamod.ability.diamond.tick.SpringDiamondAbility;
 import com.falanero.katanamod.ability.diamond.tick.SwiftnessDiamondAbility;
+import com.falanero.katanamod.callback.OnComputeFallDamage;
 import com.falanero.katanamod.callback.OnGetAirStrafingSpeedCallback;
 import com.falanero.katanamod.item.soulgem.DiamondSoulgemItem;
 import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
 import net.minecraft.component.type.TooltipDisplayComponent;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -35,7 +38,7 @@ public class DiamondKatanaItem extends KatanaItem {
         super(attackDamage, attackSpeed, settings);
 //
         OnGetAirStrafingSpeedCallback.ON_GET_AIR_STRAFING_SPEED_CALLBACK_EVENT.register(this::onGetAirStrafingSpeed);
-//        OnComputeFallDamage.ON_COMPUTE_FALL_DAMAGE_CALLBACK_EVENT.register(this::onComputeFallDamage);
+        OnComputeFallDamage.ON_COMPUTE_FALL_DAMAGE_CALLBACK_EVENT.register(this::onComputeFallDamage);
     }
 
     @Override
@@ -113,14 +116,14 @@ public class DiamondKatanaItem extends KatanaItem {
     }
 
 
-//    private TypedActionResult<Integer> onComputeFallDamage(int fallDamage, float fallDistance, float damageMultiplier, LivingEntity entity) {
-//        if (entity instanceof PlayerEntity player && isHeldBy(player, null)) {
-//            int itemLevel = getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(player, null)));
-//            return FeatherfallDiamondAbility.onComputeFallDamage(fallDamage, fallDistance, damageMultiplier, entity, itemLevel);
-//        }
-//        return new TypedActionResult<>(ActionResult.FAIL, fallDamage);
-//    }
-//
+    private Pair<Boolean, Integer> onComputeFallDamage(int fallDamage, double fallDistance, float damageMultiplier, LivingEntity entity) {
+        if (entity instanceof PlayerEntity player && isHeldBy(player, null)) {
+            int itemLevel = getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaStack(player, null)));
+            return FeatherfallDiamondAbility.onComputeFallDamage(fallDamage, fallDistance, damageMultiplier, entity, itemLevel);
+        }
+        return new ImmutablePair<>(false, fallDamage);
+    }
+
 //    @Override
 //    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 //        ItemStack itemStack = user.getStackInHand(hand);
