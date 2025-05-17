@@ -18,7 +18,10 @@ public class KatanamodItemStackData {
     }
 
     static public int getHitCount(ItemStack stack) {
-        return dataProvider.getDataOrDefault(stack, HIT_COUNT, 0);
+        if (!stack.contains(Components.HIT_COUNT_COMPONENT))
+            throw new NoSuchElementException("Tried to access component that doesn't exist.");
+
+        return stack.getOrDefault(Components.HIT_COUNT_COMPONENT, 0);
     }
 
     public static void setSoulCount(ItemStack stack, int soulCount) {
@@ -29,6 +32,9 @@ public class KatanamodItemStackData {
     }
 
     static public void setHitCount(ItemStack stack, int hitCount) {
-        dataProvider.setData(stack, HIT_COUNT, hitCount);
+        if (!stack.contains(Components.HIT_COUNT_COMPONENT))
+            throw new NoSuchElementException("Tried to access component that doesn't exist.");
+
+        stack.set(Components.HIT_COUNT_COMPONENT, hitCount);
     }
 }

@@ -6,6 +6,7 @@ import com.falanero.katanamod.ability.ConsumableAbility;
 import com.falanero.katanamod.ability.KillAbility;
 import com.falanero.katanamod.ability.TickAbility;
 import com.falanero.katanamod.ability.diamond.FeatherfallDiamondAbility;
+import com.falanero.katanamod.ability.diamond.attack.SkyboundDiamondAbility;
 import com.falanero.katanamod.ability.diamond.tick.SpringDiamondAbility;
 import com.falanero.katanamod.ability.diamond.tick.SwiftnessDiamondAbility;
 import com.falanero.katanamod.callback.OnComputeFallDamage;
@@ -84,9 +85,8 @@ public class DiamondKatanaItem extends KatanaItem {
                 (stack, target, attacker, itemLevel) -> {
                     KatanaMod.LOGGER.info(String.format("Event raised: Post Attack (%s attacked %s)",
                             attacker.getName().getString(), target.getName().getString()));
-                }
-//                SkyboundDiamondAbility.getAbility()
-
+                },
+                SkyboundDiamondAbility.getAbility()
         );
     }
 
@@ -124,7 +124,7 @@ public class DiamondKatanaItem extends KatanaItem {
         return new ImmutablePair<>(false, fallDamage);
     }
 
-//    @Override
+    //    @Override
 //    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 //        ItemStack itemStack = user.getStackInHand(hand);
 //        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_ENDER_PEARL_THROW, SoundCategory.NEUTRAL, 0.5f, 0.4f / (world.getRandom().nextFloat() * 0.4f + 0.8f));
@@ -148,7 +148,7 @@ public class DiamondKatanaItem extends KatanaItem {
     }
 
     @Override
-    protected void appendInlaidKatanaDescription(Consumer<Text> tooltip){
+    protected void appendInlaidKatanaDescription(Consumer<Text> tooltip) {
         tooltip.accept(Text.translatable("item.katanamod.diamond_katana.tooltip.soulgem"));
         tooltip.accept(Text.translatable("item.katanamod.diamond_katana.tooltip.element"));
     }

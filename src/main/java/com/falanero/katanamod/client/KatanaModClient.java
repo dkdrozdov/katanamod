@@ -18,7 +18,7 @@
 //public class KatanaModClient implements ClientModInitializer {
 //    @Override
 //    public void onInitializeClient() {
-//        EntityRendererRegistry.register(Instances.FEATHERBLADE_ENTITY, FlyingItemEntityRenderer::new);
+////        EntityRendererRegistry.register(Instances.FEATHERBLADE_ENTITY, FlyingItemEntityRenderer::new);
 //        ClientPlayNetworking.registerGlobalReceiver(SKYBOUND_S2C_PACKET_ID, (client, handler, buf, responseSender) -> {
 //            assert client.world != null;
 //            BlockPos blockPos = buf.readBlockPos();

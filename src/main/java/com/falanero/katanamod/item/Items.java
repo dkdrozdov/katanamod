@@ -36,12 +36,19 @@ public class Items {
 
     public static final Item IRON_KATANA = registerItem("iron_katana",
             settings -> new IronKatanaItem(4, -2.9f, settings),
-            new Item.Settings().component(Components.SOUL_COUNT_COMPONENT, 0).component(DataComponentTypes.UNBREAKABLE, Unit.INSTANCE));
+            new Item.Settings()
+                    .component(Components.SOUL_COUNT_COMPONENT, 0)
+                    .component(Components.HIT_COUNT_COMPONENT, 0)
+                    .component(DataComponentTypes.UNBREAKABLE, Unit.INSTANCE));
     public static final Item DIAMOND_KATANA = registerItem("diamond_katana",
             settings -> new DiamondKatanaItem(4, -2.9f, settings),
-            new Item.Settings().component(Components.SOUL_COUNT_COMPONENT, 0).component(DataComponentTypes.UNBREAKABLE, Unit.INSTANCE));
+            new Item.Settings()
+                    .component(Components.SOUL_COUNT_COMPONENT, 0)
+                    .component(Components.HIT_COUNT_COMPONENT, 0)
+                    .component(DataComponentTypes.UNBREAKABLE, Unit.INSTANCE));
     public static final Item DIAMOND_SOULGEM = registerItem("diamond_soulgem",
-            DiamondSoulgemItem::new, new Item.Settings().maxCount(1).component(Components.SOUL_COUNT_COMPONENT, 0));
+            DiamondSoulgemItem::new, new Item.Settings().maxCount(1)
+                    .component(Components.SOUL_COUNT_COMPONENT, 0));
 
     public static void initialize() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)

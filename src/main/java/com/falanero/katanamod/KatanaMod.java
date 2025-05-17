@@ -3,6 +3,8 @@ package com.falanero.katanamod;
 import com.falanero.katanamod.component.Components;
 import com.falanero.katanamod.item.Items;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -59,6 +61,8 @@ public class KatanaMod implements ModInitializer {
                         damageSource.getDeathMessage(livingEntity).getString()
                 )
         );
+        LOGGER.info("Attacker: {} Source: {}", damageSource.getAttacker() != null ? damageSource.getAttacker().getName().getString() : "null",
+                damageSource.getSource() != null ? damageSource.getSource().getName().getString() : "null");
     }
 
     @Override
@@ -66,7 +70,6 @@ public class KatanaMod implements ModInitializer {
         Items.initialize();
 //        Entities.register();
         Components.initialize();
-
 
         KatanaMod.LOGGER.info("katanamod initialized");
     }

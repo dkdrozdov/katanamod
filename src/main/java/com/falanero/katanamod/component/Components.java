@@ -15,9 +15,13 @@ public class Components {
             ComponentType.<Integer>builder().codec(Codec.INT).build()
     );
 
+    public static final ComponentType<Integer> HIT_COUNT_COMPONENT = Registry.register(
+            Registries.DATA_COMPONENT_TYPE,
+            Identifier.of(KatanaMod.MOD_ID, "hit_count"),
+            ComponentType.<Integer>builder().codec(Codec.INT).build()
+    );
+
     public static void initialize() {
         KatanaMod.LOGGER.info("Registering {} components", KatanaMod.MOD_ID);
-        // Technically this method can stay empty, but some developers like to notify
-        // the console, that certain parts of the mod have been successfully initialized
     }
 }

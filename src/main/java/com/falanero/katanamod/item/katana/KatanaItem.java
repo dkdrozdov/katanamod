@@ -1,5 +1,6 @@
 package com.falanero.katanamod.item.katana;
 
+import com.falanero.katanamod.KatanaMod;
 import com.falanero.katanamod.ability.*;
 import com.falanero.katanamod.ability.common.kill.SeizeCommonAbility;
 import com.falanero.katanamod.callback.AfterDeathCallback;
@@ -56,8 +57,9 @@ public abstract class KatanaItem extends Item {
         List<KillAbility> abilities = getKillAbilities();
 
         AfterDeathCallback.EVENT.register((entity, damageSource) -> {
-            if (damageSource.getSource() instanceof LivingEntity killerLivingEntity
+            if (entity.getPrimeAdversary() instanceof LivingEntity killerLivingEntity
                     && killerLivingEntity.getWorld() instanceof ServerWorld serverWorld) {
+                KatanaMod.LOGGER.info(damageSource.getDeathMessage(entity).getString());
 
                 ItemStack stack = getPrioritizedKatanaStack(killerLivingEntity);
 

@@ -1,12 +1,3 @@
-# Before upgrading to new version
-
-## Rework katana crafting
-
-## Documentation
-
-- add detailed descriptions of every mixin in use.
-- add concise descriptions of complex features (so they could be replicated).
-
 # After upgrading to new version
 [text](https://fabricmc.net/2022/11/24/1193.html)
 New Fabric API features

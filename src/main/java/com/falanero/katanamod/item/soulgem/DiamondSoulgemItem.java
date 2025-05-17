@@ -1,6 +1,7 @@
 package com.falanero.katanamod.item.soulgem;
 
 import com.falanero.katanamod.ability.diamond.FeatherfallDiamondAbility;
+import com.falanero.katanamod.ability.diamond.attack.SkyboundDiamondAbility;
 import com.falanero.katanamod.ability.diamond.tick.SpringDiamondAbility;
 import com.falanero.katanamod.ability.diamond.tick.SwiftnessDiamondAbility;
 import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
@@ -22,7 +23,7 @@ public class DiamondSoulgemItem extends SoulGemItem {
         int level = getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
 
         tooltip.accept(Text.translatable("item.katanamod.diamond_katana.element_description"));
-//        SkyboundDiamondAbility.appendTooltip(level, tooltip);
+        SkyboundDiamondAbility.appendTooltip(level, tooltip);
         SwiftnessDiamondAbility.appendTooltip(level, tooltip);
         SpringDiamondAbility.appendTooltip(level, tooltip);
         FeatherfallDiamondAbility.appendTooltip(level, tooltip);
