@@ -2,7 +2,10 @@ package com.falanero.katanamod;
 
 import com.falanero.katanamod.component.Components;
 import com.falanero.katanamod.item.Items;
+import com.falanero.katanamod.util.CombatLogger;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.Entity;
@@ -10,12 +13,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static net.minecraft.server.command.CommandManager.*;
 
 public class KatanaMod implements ModInitializer {
     public static final String MOD_ID = "katanamod";
@@ -65,12 +70,13 @@ public class KatanaMod implements ModInitializer {
                 damageSource.getSource() != null ? damageSource.getSource().getName().getString() : "null");
     }
 
+    public static CombatLogger combatLogger = new CombatLogger();
+
     @Override
     public void onInitialize() {
         Items.initialize();
 //        Entities.register();
         Components.initialize();
-
         KatanaMod.LOGGER.info("katanamod initialized");
     }
 }

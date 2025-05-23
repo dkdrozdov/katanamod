@@ -1,12 +1,4 @@
 # After upgrading to new version
-[text](https://fabricmc.net/2022/11/24/1193.html)
-New Fabric API features
-- Entity Events: add AFTER_DEATH, AFTER_DAMAGE, and ALLOW_DEATH events. (Technici4n)
-There are several changes to registries...
-
-NBT changes
-[text](https://fabricmc.net/2024/04/19/1205.html)
-[text](https://fabricmc.net/2025/03/24/1215.html)
 
 ## Test framework
 

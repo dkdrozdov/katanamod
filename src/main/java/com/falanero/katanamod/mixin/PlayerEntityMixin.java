@@ -1,13 +1,11 @@
 package com.falanero.katanamod.mixin;
 
 import com.falanero.katanamod.KatanaMod;
-import com.falanero.katanamod.callback.AfterDeathCallback;
-import com.falanero.katanamod.callback.OnAttackCallback;
-import com.falanero.katanamod.callback.OnGetAirStrafingSpeedCallback;
-import com.falanero.katanamod.callback.PlayerEntityTickCallback;
+import com.falanero.katanamod.callback.*;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -27,7 +25,12 @@ public class PlayerEntityMixin {
     private float modifyOffGroundSpeed(float original) {
         return OnGetAirStrafingSpeedCallback.ON_GET_AIR_STRAFING_SPEED_CALLBACK_EVENT.invoker().intercept(original, (PlayerEntity) (Object) this).getRight();
     }
-    
+
+    @Inject(method = "applyDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;setHealth(F)V"))
+    private void onDamageAppliedInject(ServerWorld world, DamageSource source, float amount, CallbackInfo ci) {
+        OnDamageAppliedCallback.ON_DAMAGE_APPLIED_EVENT.invoker().notify(world, source, amount, (LivingEntity) (Object) (this));
+    }
+
     @Inject(at = @At("TAIL"), method = "tick")
     private void onPlayerEntityTick(CallbackInfo info) {
         PlayerEntityTickCallback.EVENT.invoker().notify((PlayerEntity) (Object) this);
