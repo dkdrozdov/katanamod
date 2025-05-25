@@ -1,10 +1,15 @@
 package com.falanero.katanamod.ability.diamond.attack;
 
 import com.falanero.katanamod.KatanaMod;
-import com.falanero.katanamod.ability.AttackAbility;
+import com.falanero.katanamod.ability.Ability;
+import com.falanero.katanamod.callback.OnAttackCallback;
+import com.falanero.katanamod.item.Items;
+import com.falanero.katanamod.item.katana.DiamondKatanaItem;
 import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
+import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -16,16 +21,19 @@ import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.List;
 import java.util.function.Consumer;
 
+import static com.falanero.katanamod.util.Souls.getCurrentLevel;
 import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
 
-public class SkyboundDiamondAbility {
+public class SkyboundDiamondAbility extends Ability<OnAttackCallback> {
+
     private static int getLevel(int itemLevel) {
         return arithmeticProgression(2, 2, 6, itemLevel);
     }
@@ -58,15 +66,7 @@ public class SkyboundDiamondAbility {
         return Math.max(7 - abilityLevel + 1, 3);
     }
 
-    private static boolean isTriggered(int abilityLevel, int hitCount) {
-        int currentHitCountTrigger = getAttacksToTrigger(abilityLevel);
 
-        return hitCount >= currentHitCountTrigger;
-    }
-
-    public static AttackAbility getAbility(){
-        return SkyboundDiamondAbility::apply;
-    }
     private static void applyAbility(LivingEntity target, LivingEntity player, int abilityLevel) {
         int jumpBoostLevel = getJumpBoostLevel(abilityLevel) - 1;
         int jumpBoostTimeTicks = (int) (getJumpBoostTime(abilityLevel) * 20);
@@ -89,9 +89,11 @@ public class SkyboundDiamondAbility {
         target.setVelocity(velocityVector);
         player.velocityModified = true;
         target.velocityModified = true;
-        if (target instanceof PlayerEntity)((ServerPlayerEntity)target).networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(target));
-        ((ServerPlayerEntity)player).networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(player));
-        player.velocityModified = false;        target.velocityModified = false;
+        if (target instanceof PlayerEntity)
+            ((ServerPlayerEntity) target).networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(target));
+        ((ServerPlayerEntity) player).networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(player));
+        player.velocityModified = false;
+        target.velocityModified = false;
 
 
         BlockPos targetPos = new BlockPos(target.getBlockPos());
@@ -117,22 +119,67 @@ public class SkyboundDiamondAbility {
 //        }
     }
 
-    static void apply(ItemStack stack, LivingEntity target, LivingEntity attacker, int itemLevel) {
-        if(attacker.getWorld() instanceof  ClientWorld clientWorld){
+    @Override
+    public Event<OnAttackCallback> getEvent() {
+        return OnAttackCallback.POST_HIT_CALLBACK_EVENT;
+    }
+
+    @Override
+    public OnAttackCallback getFunction() {
+        return this::apply;
+    }
+
+    private void apply(Entity target, PlayerEntity attacker) {
+        ItemStack stack = getKatanaItem().getKatanaStack(attacker, Hand.MAIN_HAND);
+        if ((target == null) || (attacker == null) || (stack == null))
+            return;
+
+        if (attacker.getWorld() instanceof ClientWorld clientWorld) {
             KatanaMod.LOGGER.info("Tried to apply SkyboundDiamondAbility in client thread.");
             return;
         }
 
-        int abilityLevel = getLevel(itemLevel);
+        if (target instanceof LivingEntity targetLivingEntity) {
+            int level = getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
+            int abilityLevel = getLevel(level);
+            if (abilityLevel < 1)
+                return;
+            apply(stack, targetLivingEntity, attacker, abilityLevel);
+        }
+    }
 
-        if (abilityLevel < 1)
-            return;
+    @Override
+    public DiamondKatanaItem getKatanaItem() {
+        return (DiamondKatanaItem) Items.DIAMOND_KATANA;
+    }
 
+    @Override
+    public Identifier getIconTexture() {
+        return Identifier.ofVanilla("textures/mob_effect/wind_charged.png");
+    }
+
+    @Override
+    public Text getName() {
+        return Text.translatable("katanamod.ability.diamond.skybound.name");
+    }
+
+    @Override
+    public Text getDescription() {
+        return Text.translatable("katanamod.ability.diamond.skybound.description");
+    }
+
+    private void apply(ItemStack stack, LivingEntity target, LivingEntity attacker, int abilityLevel) {
         int hitCount = KatanamodItemStackData.getHitCount(stack) + 1;
         if (isTriggered(abilityLevel, hitCount)) {
             hitCount = 0;
             applyAbility(target, attacker, abilityLevel);
         }
         KatanamodItemStackData.setHitCount(stack, hitCount);
+    }
+
+    private static boolean isTriggered(int abilityLevel, int hitCount) {
+        int currentHitCountTrigger = getAttacksToTrigger(abilityLevel);
+
+        return hitCount >= currentHitCountTrigger;
     }
 }

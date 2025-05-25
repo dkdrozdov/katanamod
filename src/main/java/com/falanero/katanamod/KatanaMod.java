@@ -5,18 +5,27 @@ import com.falanero.katanamod.item.Items;
 import com.falanero.katanamod.util.CombatLogger;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +86,21 @@ public class KatanaMod implements ModInitializer {
         Items.initialize();
 //        Entities.register();
         Components.initialize();
+
+//        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+//            dispatcher.register(
+//                    literal("testitem")
+//                            .executes(context -> {
+//                                ItemStack stack = new ItemStack(net.minecraft.item.Items.ACACIA_BOAT);
+//stack.set(DataComponentTypes.)
+//                                if (context.getSource().getPlayer() instanceof PlayerEntity playerEntity) {
+//                                    playerEntity.getInventory().insertStack(stack);
+//                                    return 1;
+//                                }
+//                                return 0;
+//                            })
+//            );
+//        });
         KatanaMod.LOGGER.info("katanamod initialized");
     }
 }

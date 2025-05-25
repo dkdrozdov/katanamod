@@ -1,20 +1,27 @@
 package com.falanero.katanamod.ability.diamond.tick;
 
-import com.falanero.katanamod.ability.TickAbility;
+import com.falanero.katanamod.ability.Ability;
+import com.falanero.katanamod.callback.PlayerEntityTickCallback;
+import com.falanero.katanamod.item.Items;
+import com.falanero.katanamod.item.katana.KatanaItem;
+import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
+import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 
-import java.util.List;
 import java.util.function.Consumer;
 
+import static com.falanero.katanamod.util.Souls.getCurrentLevel;
 import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
 
-public class SpringDiamondAbility {
+public class SpringDiamondAbility extends Ability<PlayerEntityTickCallback> {
     private static int getLevel(int itemLevel) {
         return arithmeticProgression(1, 2, 10, itemLevel);
     }
@@ -28,30 +35,62 @@ public class SpringDiamondAbility {
         tooltip.accept(Text.translatable("item.katanamod.diamond_katana.ability.spring.description", toRoman(abilityLevel)));
     }
 
-    public static TickAbility getAbility(){
-        return SpringDiamondAbility::apply;
+    @Override
+    public Event<PlayerEntityTickCallback> getEvent() {
+        return PlayerEntityTickCallback.EVENT;
     }
 
-    public static void apply(PlayerEntity player, int itemLevel) {
-        int abilityLevel = getLevel(itemLevel);
-        if (abilityLevel < 1)
-            return;
+    @Override
+    public PlayerEntityTickCallback getFunction() {
+        return this::apply;
+    }
 
-        if (player.getWorld() instanceof ServerWorld serverWorld) {
-            if (player.isSneaking()) {
-                int effectLevel;
-                int effectTickTime;
-                effectLevel = (abilityLevel - 1) / 2;
-                effectTickTime = 10;
-
-                player.addStatusEffect(new StatusEffectInstance(
-                        StatusEffects.JUMP_BOOST,
-                        effectTickTime,
-                        effectLevel,
-                        false,
-                        false,
-                        true));
+    private void apply(PlayerEntity player) {
+        if (player == null) return;
+        ItemStack stack = getKatanaItem().getKatanaStack(player, null);
+        if (stack != null) {
+            int level = getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
+            int abilityLevel = getLevel(level);
+            if (abilityLevel < 1)
+                return;
+            if (player.getWorld() instanceof ServerWorld) {
+                apply(player, abilityLevel);
             }
         }
+    }
+
+    private void apply(PlayerEntity player, int abilityLevel) {
+        if (player.isSneaking()) {
+            int effectLevel = (abilityLevel - 1) / 2;
+            int effectTickTime = 10;
+
+            player.addStatusEffect(new StatusEffectInstance(
+                    StatusEffects.JUMP_BOOST,
+                    effectTickTime,
+                    effectLevel,
+                    false,
+                    false,
+                    true));
+        }
+    }
+
+    @Override
+    public KatanaItem getKatanaItem() {
+        return (KatanaItem) Items.DIAMOND_KATANA;
+    }
+
+    @Override
+    public Identifier getIconTexture() {
+        return Identifier.ofVanilla("textures/mob_effect/jump_boost.png");
+    }
+
+    @Override
+    public Text getName() {
+        return Text.translatable("katanamod.ability.diamond.spring.name");
+    }
+
+    @Override
+    public Text getDescription() {
+        return Text.translatable("katanamod.ability.diamond.spring.description");
     }
 }

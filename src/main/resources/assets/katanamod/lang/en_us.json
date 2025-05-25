@@ -1,5 +1,5 @@
 {
-  "item.katanamod.diamond_katana": "Diamond-inlaid Katana - Level %d",
+  "item.katanamod.diamond_katana": "Diamond Katana",
   "item.katanamod.diamond_katana.ability.skybound.description.line_1": "* Every %dth attack gain Jump boost %s effect for",
   "item.katanamod.diamond_katana.ability.skybound.description.line_2": "  %f seconds and throws target and self up %f blocks.",
   "item.katanamod.diamond_katana.ability.skybound.description.line_3": "  Also increases air strafing speed.",
@@ -25,5 +25,21 @@
   "item.katanamod.soulgem_item.tooltip_line_1": "A stone enhanced by souls trapped inside of it.",
   "item.katanamod.tooltip_display_more_info": "Press Shift for detailed information.",
   "item.katanamod.tooltip_level": "Level: %d",
-  "item.katanamod.tooltip_souls": "Souls: %d / %d"
+  "item.katanamod.tooltip_souls": "Souls: %d / %d",
+  "katanamod.keybindings.binding.open_ability_screen": "Open Abilities Menu",
+  "katanamod.keybindings.category": "Katana Mod",
+  "katanamod.katana.iron_katana.name": "Iron Katana",
+  "katanamod.katana.iron_katana.description": "Plain iron katana. Can be upgraded to other katanas.",
+  "katanamod.katana.diamond_katana.description": "Katana enchanted with properties of air and sky.",
+  "katanamod.katana.diamond_katana.name": "Diamond Katana",
+  "katanamod.ability.diamond.featherfall.name": "Featherfall",
+  "katanamod.ability.diamond.skybound.name": "Skybound",
+  "katanamod.ability.diamond.spring.name": "Spring",
+  "katanamod.ability.diamond.swiftness.name": "Swiftness",
+  "katanamod.ability.diamond.weave.name": "Weave",
+  "katanamod.ability.diamond.featherfall.description": "Reduces fall damage when sneaking.",
+  "katanamod.ability.diamond.skybound.description": "Every 3rd attack with katana launches both the attacker and the attacked in the air.",
+  "katanamod.ability.diamond.spring.description": "Sneaking gives short jumb boost effect.",
+  "katanamod.ability.diamond.swiftness.description": "Gives permanent speed effect.",
+  "katanamod.ability.diamond.weave.description": "Amplifies speed when in air."
 }

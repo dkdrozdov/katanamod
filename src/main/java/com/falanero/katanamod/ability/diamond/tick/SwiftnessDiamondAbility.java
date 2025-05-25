@@ -1,22 +1,27 @@
 package com.falanero.katanamod.ability.diamond.tick;
 
-import com.falanero.katanamod.ability.TickAbility;
+import com.falanero.katanamod.ability.Ability;
+import com.falanero.katanamod.callback.PlayerEntityTickCallback;
+import com.falanero.katanamod.item.Items;
+import com.falanero.katanamod.item.katana.KatanaItem;
+import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
+import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraft.util.Identifier;
 
-import java.util.List;
 import java.util.function.Consumer;
 
+import static com.falanero.katanamod.util.Souls.getCurrentLevel;
 import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
 
-public class SwiftnessDiamondAbility {
+public class SwiftnessDiamondAbility extends Ability<PlayerEntityTickCallback> {
     private static int getLevel(int itemLevel) {
         return arithmeticProgression(1, 2, 10, itemLevel);
     }
@@ -30,51 +35,60 @@ public class SwiftnessDiamondAbility {
         tooltip.accept(Text.translatable("item.katanamod.diamond_katana.swiftness.description", toRoman(abilityLevel)));
     }
 
-    public static Pair<Boolean, Float> onGetAirStrafingSpeed(float original, PlayerEntity player, int itemLevel) {
-        int abilityLevel = getLevel(itemLevel);
-        if (abilityLevel < 1)
-            return new ImmutablePair<>(false, original);
-        var speed = player.getMovementSpeed();
-        return new ImmutablePair<>(true, player.isSprinting() ? speed / 3.846f : speed / 5.0f);
+    @Override
+    public Event<PlayerEntityTickCallback> getEvent() {
+        return PlayerEntityTickCallback.EVENT;
     }
 
-    public static TickAbility getAbility() {
-        return SwiftnessDiamondAbility::apply;
+    @Override
+    public PlayerEntityTickCallback getFunction() {
+        return this::apply;
     }
 
-    public static void apply(PlayerEntity player, int itemLevel) {
-        int abilityLevel = getLevel(itemLevel);
-        if (abilityLevel < 1)
-            return;
+    private void apply(PlayerEntity player) {
+        if (player == null) return;
 
-        if (player.getWorld() instanceof ServerWorld serverWorld) {
-            {
-//                int effectLevel = player.isOnGround() ? abilityLevel - 1 : abilityLevel * 4 - 1;
-                int effectLevel = abilityLevel - 1;
+        ItemStack stack = getKatanaItem().getKatanaStack(player, null);
+        if (stack == null) return;
 
-                player.addStatusEffect(new StatusEffectInstance(
-                        StatusEffects.SPEED,
-                        2,
-                        effectLevel,
-                        false,
-                        false,
-                        true));
-            }
-            // Demo-section
-            if (player.isSneaking()) {
-                int effectLevel;
-                int effectTickTime;
-                effectLevel = (abilityLevel - 1) / 2;
-                effectTickTime = 10;
+        int level = getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
+        int abilityLevel = getLevel(level);
+        if (abilityLevel < 1) return;
 
-                player.addStatusEffect(new StatusEffectInstance(
-                        StatusEffects.JUMP_BOOST,
-                        effectTickTime,
-                        effectLevel,
-                        false,
-                        false,
-                        true));
-            }
+        if (player.getWorld() instanceof ServerWorld) {
+            apply(player, abilityLevel);
         }
+    }
+
+    public void apply(PlayerEntity player, int abilityLevel) {
+        int effectLevel = abilityLevel - 1;
+
+        player.addStatusEffect(new StatusEffectInstance(
+                StatusEffects.SPEED,
+                2,
+                effectLevel,
+                false,
+                false,
+                true));
+    }
+
+    @Override
+    public KatanaItem getKatanaItem() {
+        return (KatanaItem) Items.DIAMOND_KATANA;
+    }
+
+    @Override
+    public Identifier getIconTexture() {
+        return Identifier.ofVanilla("textures/mob_effect/speed.png");
+    }
+
+    @Override
+    public Text getName() {
+        return Text.translatable("katanamod.ability.diamond.swiftness.name");
+    }
+
+    @Override
+    public Text getDescription() {
+        return Text.translatable("katanamod.ability.diamond.swiftness.description");
     }
 }
