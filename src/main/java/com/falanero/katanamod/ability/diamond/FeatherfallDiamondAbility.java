@@ -21,12 +21,9 @@ import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
 
 public class FeatherfallDiamondAbility extends Ability<OnComputeFallDamage> {
-    private static int getLevel(int itemLevel) {
-        return arithmeticProgression(1, 2, 10, itemLevel);
-    }
 
-    public static void appendTooltip(int itemLevel, Consumer<Text> tooltip) {
-        int abilityLevel = getLevel(itemLevel);
+    public void appendTooltip(int itemLevel, Consumer<Text> tooltip) {
+        int abilityLevel = getAbilityLevel(itemLevel);
         if (abilityLevel < 1)
             return;
 
@@ -34,7 +31,7 @@ public class FeatherfallDiamondAbility extends Ability<OnComputeFallDamage> {
         tooltip.accept(Text.translatable("item.katanamod.diamond_katana.ability.featherfall.description", ((int) ((1 - getReduction(abilityLevel)) * 100))));
     }
 
-    private static float getReduction(int abilityLevel) {
+    private float getReduction(int abilityLevel) {
         return 1f - (4 + 7 * (float) abilityLevel) / 100f;
     }
 
@@ -52,7 +49,7 @@ public class FeatherfallDiamondAbility extends Ability<OnComputeFallDamage> {
     private Pair<Boolean, Integer> apply(int fallDamage, double fallDistance, float damageMultiplier, LivingEntity entity) {
         if (entity instanceof PlayerEntity player && getKatanaItem().isHeldBy(player, null)) {
             int itemLevel = getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaItem().getKatanaStack(player, null)));
-            int abilityLevel = getLevel(itemLevel);
+            int abilityLevel = getAbilityLevel(itemLevel);
             if (abilityLevel < 1) return new ImmutablePair<>(false, fallDamage);
 
             return onComputeFallDamage(fallDamage, fallDistance, damageMultiplier, entity, abilityLevel);
@@ -60,7 +57,7 @@ public class FeatherfallDiamondAbility extends Ability<OnComputeFallDamage> {
         return new ImmutablePair<>(false, fallDamage);
     }
 
-    private static Pair<Boolean, Integer> onComputeFallDamage(int fallDamage, double fallDistance, float damageMultiplier, LivingEntity entity, int abilityLevel) {
+    private Pair<Boolean, Integer> onComputeFallDamage(int fallDamage, double fallDistance, float damageMultiplier, LivingEntity entity, int abilityLevel) {
         if (entity.isSneaking()) {
 //            int rawDamage = MathHelper.ceil((fallDistance - 3.0f) * damageMultiplier);
 //            float reductionFactor = getReduction(abilityLevel);
@@ -88,5 +85,20 @@ public class FeatherfallDiamondAbility extends Ability<OnComputeFallDamage> {
     @Override
     public Text getDescription() {
         return Text.translatable("katanamod.ability.diamond.featherfall.description");
+    }
+
+    @Override
+    public int getStartingLevel() {
+        return 1;
+    }
+
+    @Override
+    public int getIncrementLevel() {
+        return 2;
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return 10;
     }
 }

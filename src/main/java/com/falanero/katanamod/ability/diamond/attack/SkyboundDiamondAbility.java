@@ -34,12 +34,8 @@ import static com.falanero.katanamod.util.Utility.toRoman;
 
 public class SkyboundDiamondAbility extends Ability<OnAttackCallback> {
 
-    private static int getLevel(int itemLevel) {
-        return arithmeticProgression(2, 2, 6, itemLevel);
-    }
-
-    public static void appendTooltip(int itemLevel, Consumer<Text> tooltip) {
-        int abilityLevel = getLevel(itemLevel);
+    public void appendTooltip(int itemLevel, Consumer<Text> tooltip) {
+        int abilityLevel = getAbilityLevel(itemLevel);
         if (abilityLevel < 1)
             return;
         tooltip.accept(Text.translatable("item.katanamod.diamond_katana.ability.skybound.title", toRoman(abilityLevel)).formatted(Formatting.BOLD));
@@ -141,7 +137,7 @@ public class SkyboundDiamondAbility extends Ability<OnAttackCallback> {
 
         if (target instanceof LivingEntity targetLivingEntity) {
             int level = getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
-            int abilityLevel = getLevel(level);
+            int abilityLevel = getAbilityLevel(level);
             if (abilityLevel < 1)
                 return;
             apply(stack, targetLivingEntity, attacker, abilityLevel);
@@ -167,6 +163,22 @@ public class SkyboundDiamondAbility extends Ability<OnAttackCallback> {
     public Text getDescription() {
         return Text.translatable("katanamod.ability.diamond.skybound.description");
     }
+
+    @Override
+    public int getStartingLevel() {
+        return 2;
+    }
+
+    @Override
+    public int getIncrementLevel() {
+        return 2;
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return 6;
+    }
+
 
     private void apply(ItemStack stack, LivingEntity target, LivingEntity attacker, int abilityLevel) {
         int hitCount = KatanamodItemStackData.getHitCount(stack) + 1;

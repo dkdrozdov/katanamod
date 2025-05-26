@@ -22,12 +22,9 @@ import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
 
 public class SpringDiamondAbility extends Ability<PlayerEntityTickCallback> {
-    private static int getLevel(int itemLevel) {
-        return arithmeticProgression(1, 2, 10, itemLevel);
-    }
 
-    public static void appendTooltip(int itemLevel, Consumer<Text> tooltip) {
-        int abilityLevel = getLevel(itemLevel);
+    public void appendTooltip(int itemLevel, Consumer<Text> tooltip) {
+        int abilityLevel = getAbilityLevel(itemLevel);
         if (abilityLevel < 1)
             return;
 
@@ -50,7 +47,7 @@ public class SpringDiamondAbility extends Ability<PlayerEntityTickCallback> {
         ItemStack stack = getKatanaItem().getKatanaStack(player, null);
         if (stack != null) {
             int level = getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
-            int abilityLevel = getLevel(level);
+            int abilityLevel = getAbilityLevel(level);
             if (abilityLevel < 1)
                 return;
             if (player.getWorld() instanceof ServerWorld) {
@@ -93,4 +90,20 @@ public class SpringDiamondAbility extends Ability<PlayerEntityTickCallback> {
     public Text getDescription() {
         return Text.translatable("katanamod.ability.diamond.spring.description");
     }
+
+    @Override
+    public int getStartingLevel() {
+        return 1;
+    }
+
+    @Override
+    public int getIncrementLevel() {
+        return 2;
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return 10;
+    }
+
 }

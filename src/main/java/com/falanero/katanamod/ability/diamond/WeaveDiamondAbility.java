@@ -16,9 +16,6 @@ import static com.falanero.katanamod.util.Souls.getCurrentLevel;
 import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 
 public class WeaveDiamondAbility extends Ability<OnGetAirStrafingSpeedCallback> {
-    private static int getLevel(int itemLevel) {
-        return arithmeticProgression(1, 2, 10, itemLevel);
-    }
 
     @Override
     public Event<OnGetAirStrafingSpeedCallback> getEvent() {
@@ -34,7 +31,7 @@ public class WeaveDiamondAbility extends Ability<OnGetAirStrafingSpeedCallback> 
         if (!getKatanaItem().isHeldBy(player, null)) return new ImmutablePair<>(false, originalSpeed);
 
         int itemLevel = getCurrentLevel(KatanamodItemStackData.getSoulCount(getKatanaItem().getKatanaStack(player, null)));
-        int abilityLevel = getLevel(itemLevel);
+        int abilityLevel = getAbilityLevel(itemLevel);
         if (abilityLevel < 1)
             return new ImmutablePair<>(false, originalSpeed);
 
@@ -65,5 +62,20 @@ public class WeaveDiamondAbility extends Ability<OnGetAirStrafingSpeedCallback> 
     @Override
     public Text getDescription() {
         return Text.translatable("katanamod.ability.diamond.weave.description");
+    }
+
+    @Override
+    public int getStartingLevel() {
+        return 1;
+    }
+
+    @Override
+    public int getIncrementLevel() {
+        return 2;
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return 10;
     }
 }

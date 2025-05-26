@@ -41,5 +41,9 @@
   "katanamod.ability.diamond.skybound.description": "Every 3rd attack with katana launches both the attacker and the attacked in the air.",
   "katanamod.ability.diamond.spring.description": "Sneaking gives short jumb boost effect.",
   "katanamod.ability.diamond.swiftness.description": "Gives permanent speed effect.",
-  "katanamod.ability.diamond.weave.description": "Amplifies speed when in air."
+  "katanamod.ability.diamond.weave.description": "Amplifies speed when in air.",
+  "katanamod.katana.level": "Level %d",
+  "katanamod.katana.souls": "Souls: %d / %d",
+  "katanamod.katana.ability.level": "%d/%d",
+  "katanamod.katana.ability.nextLevel": "Next upgrade at level %d."
 }

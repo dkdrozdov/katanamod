@@ -20,13 +20,13 @@ public class DiamondSoulgemItem extends SoulGemItem {
 
 
     public static void appendExtra(ItemStack stack, Consumer<Text> tooltip) {
-        int level = getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
-
-        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.element_description"));
-        SkyboundDiamondAbility.appendTooltip(level, tooltip);
-        SwiftnessDiamondAbility.appendTooltip(level, tooltip);
-        SpringDiamondAbility.appendTooltip(level, tooltip);
-        FeatherfallDiamondAbility.appendTooltip(level, tooltip);
+//        int level = getCurrentLevel(KatanamodItemStackData.getSoulCount(stack));
+//
+//        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.element_description"));
+//        SkyboundDiamondAbility.appendTooltip(level, tooltip);
+//        SwiftnessDiamondAbility.appendTooltip(level, tooltip);
+//        SpringDiamondAbility.appendTooltip(level, tooltip);
+//        FeatherfallDiamondAbility.appendTooltip(level, tooltip);
 //        WindbombDiamondAbility.appendTooltip(level, tooltip);
 //        FeatherbladeDiamondAbility.appendTooltip(level, tooltip);
     }
