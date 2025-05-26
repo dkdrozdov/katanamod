@@ -12,25 +12,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
-import java.util.function.Consumer;
-
 import static com.falanero.katanamod.util.Souls.getCurrentLevel;
-import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
 
 public class SpringDiamondAbility extends Ability<PlayerEntityTickCallback> {
-
-    public void appendTooltip(int itemLevel, Consumer<Text> tooltip) {
-        int abilityLevel = getAbilityLevel(itemLevel);
-        if (abilityLevel < 1)
-            return;
-
-        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.ability.spring.title", toRoman(abilityLevel)).formatted(Formatting.BOLD));
-        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.ability.spring.description", toRoman(abilityLevel)));
-    }
 
     @Override
     public Event<PlayerEntityTickCallback> getEvent() {
@@ -56,9 +43,13 @@ public class SpringDiamondAbility extends Ability<PlayerEntityTickCallback> {
         }
     }
 
+    private int getEffectLevel(int abilityLevel) {
+        return (abilityLevel - 1) / 2;
+    }
+
     private void apply(PlayerEntity player, int abilityLevel) {
         if (player.isSneaking()) {
-            int effectLevel = (abilityLevel - 1) / 2;
+            int effectLevel = getEffectLevel(abilityLevel);
             int effectTickTime = 10;
 
             player.addStatusEffect(new StatusEffectInstance(
@@ -87,8 +78,13 @@ public class SpringDiamondAbility extends Ability<PlayerEntityTickCallback> {
     }
 
     @Override
-    public Text getDescription() {
-        return Text.translatable("katanamod.ability.diamond.spring.description");
+    public Text getGenericDescription() {
+        return Text.translatable("katanamod.ability.diamond.spring.description.generic");
+    }
+
+    @Override
+    public Text getDetailedDescription(int abilityLevel) {
+        return Text.translatable("katanamod.ability.diamond.spring.description.detailed", toRoman(getEffectLevel(abilityLevel)+1));
     }
 
     @Override

@@ -20,29 +20,15 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.function.Consumer;
-
 import static com.falanero.katanamod.util.Souls.getCurrentLevel;
-import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 import static com.falanero.katanamod.util.Utility.toRoman;
 
 public class SkyboundDiamondAbility extends Ability<OnAttackCallback> {
-
-    public void appendTooltip(int itemLevel, Consumer<Text> tooltip) {
-        int abilityLevel = getAbilityLevel(itemLevel);
-        if (abilityLevel < 1)
-            return;
-        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.ability.skybound.title", toRoman(abilityLevel)).formatted(Formatting.BOLD));
-        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.ability.skybound.description.line_1", getAttacksToTrigger(abilityLevel), toRoman(getJumpBoostLevel(abilityLevel))));
-        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.ability.skybound.description.line_2", getJumpBoostTime(abilityLevel), getThrowHeight(abilityLevel)));
-    }
-
     /**
      * @return duration time in seconds.
      */
@@ -51,7 +37,7 @@ public class SkyboundDiamondAbility extends Ability<OnAttackCallback> {
     }
 
     private static int getJumpBoostLevel(int abilityLevel) {
-        return abilityLevel;
+        return abilityLevel - 1;
     }
 
     private static float getThrowHeight(int abilityLevel) {
@@ -64,7 +50,7 @@ public class SkyboundDiamondAbility extends Ability<OnAttackCallback> {
 
 
     private static void applyAbility(LivingEntity target, LivingEntity player, int abilityLevel) {
-        int jumpBoostLevel = getJumpBoostLevel(abilityLevel) - 1;
+        int jumpBoostLevel = getJumpBoostLevel(abilityLevel);
         int jumpBoostTimeTicks = (int) (getJumpBoostTime(abilityLevel) * 20);
         double targetKnockbackResistance = Math.max(0.0, 1.0 - target.getAttributeValue(EntityAttributes.KNOCKBACK_RESISTANCE));
         double playerKnockbackResistance = Math.max(0.0, 1.0 - player.getAttributeValue(EntityAttributes.KNOCKBACK_RESISTANCE));
@@ -130,7 +116,7 @@ public class SkyboundDiamondAbility extends Ability<OnAttackCallback> {
         if ((target == null) || (attacker == null) || (stack == null))
             return;
 
-        if (attacker.getWorld() instanceof ClientWorld clientWorld) {
+        if (attacker.getWorld() instanceof ClientWorld) {
             KatanaMod.LOGGER.info("Tried to apply SkyboundDiamondAbility in client thread.");
             return;
         }
@@ -160,8 +146,18 @@ public class SkyboundDiamondAbility extends Ability<OnAttackCallback> {
     }
 
     @Override
-    public Text getDescription() {
-        return Text.translatable("katanamod.ability.diamond.skybound.description");
+    public Text getGenericDescription() {
+        return Text.translatable("katanamod.ability.diamond.skybound.description.generic");
+    }
+
+    @Override
+    public Text getDetailedDescription(int abilityLevel) {
+        return Text.translatable("katanamod.ability.diamond.skybound.description.detailed",
+                getAttacksToTrigger(abilityLevel),
+                toRoman(getJumpBoostLevel(abilityLevel) + 1),
+                getJumpBoostTime(abilityLevel),
+                getThrowHeight(abilityLevel)
+        );
     }
 
     @Override

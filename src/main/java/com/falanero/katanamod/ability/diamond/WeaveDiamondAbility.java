@@ -13,7 +13,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import static com.falanero.katanamod.util.Souls.getCurrentLevel;
-import static com.falanero.katanamod.util.Utility.arithmeticProgression;
 
 public class WeaveDiamondAbility extends Ability<OnGetAirStrafingSpeedCallback> {
 
@@ -60,22 +59,27 @@ public class WeaveDiamondAbility extends Ability<OnGetAirStrafingSpeedCallback> 
     }
 
     @Override
-    public Text getDescription() {
-        return Text.translatable("katanamod.ability.diamond.weave.description");
+    public Text getGenericDescription() {
+        return Text.translatable("katanamod.ability.diamond.weave.description.generic");
+    }
+
+    @Override
+    public Text getDetailedDescription(int abilityLevel) {
+        return Text.translatable("katanamod.ability.diamond.weave.description.detailed");
     }
 
     @Override
     public int getStartingLevel() {
-        return 1;
+        return 3;
     }
 
     @Override
     public int getIncrementLevel() {
-        return 2;
+        return 1;
     }
 
     @Override
     public int getMaxLevel() {
-        return 10;
+        return 1;
     }
 }

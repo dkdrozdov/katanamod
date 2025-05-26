@@ -9,27 +9,13 @@ import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.function.Consumer;
-
 import static com.falanero.katanamod.util.Souls.getCurrentLevel;
-import static com.falanero.katanamod.util.Utility.arithmeticProgression;
-import static com.falanero.katanamod.util.Utility.toRoman;
 
 public class FeatherfallDiamondAbility extends Ability<OnComputeFallDamage> {
-
-    public void appendTooltip(int itemLevel, Consumer<Text> tooltip) {
-        int abilityLevel = getAbilityLevel(itemLevel);
-        if (abilityLevel < 1)
-            return;
-
-        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.ability.featherfall.title", toRoman(abilityLevel)).formatted(Formatting.BOLD));
-        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.ability.featherfall.description", ((int) ((1 - getReduction(abilityLevel)) * 100))));
-    }
 
     private float getReduction(int abilityLevel) {
         return 1f - (4 + 7 * (float) abilityLevel) / 100f;
@@ -83,22 +69,27 @@ public class FeatherfallDiamondAbility extends Ability<OnComputeFallDamage> {
     }
 
     @Override
-    public Text getDescription() {
-        return Text.translatable("katanamod.ability.diamond.featherfall.description");
+    public Text getGenericDescription() {
+        return Text.translatable("katanamod.ability.diamond.featherfall.description.generic");
+    }
+
+    @Override
+    public Text getDetailedDescription(int abilityLevel) {
+        return Text.translatable("katanamod.ability.diamond.featherfall.description.detailed");
     }
 
     @Override
     public int getStartingLevel() {
-        return 1;
+        return 5;
     }
 
     @Override
     public int getIncrementLevel() {
-        return 2;
+        return 1;
     }
 
     @Override
     public int getMaxLevel() {
-        return 10;
+        return 1;
     }
 }

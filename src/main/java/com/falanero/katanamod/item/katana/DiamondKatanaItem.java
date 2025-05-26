@@ -1,11 +1,6 @@
 package com.falanero.katanamod.item.katana;
 
-import com.falanero.katanamod.item.soulgem.DiamondSoulgemItem;
 import com.falanero.katanamod.katana.Katana;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-
-import java.util.function.Consumer;
 
 public class DiamondKatanaItem extends KatanaItem {
 
@@ -36,14 +31,4 @@ public class DiamondKatanaItem extends KatanaItem {
 //        }
 //    }
 //
-    @Override
-    public void appendTooltipExtra(ItemStack stack, Consumer<Text> tooltip) {
-        DiamondSoulgemItem.appendExtra(stack, tooltip);
-    }
-
-    @Override
-    protected void appendInlaidKatanaDescription(Consumer<Text> tooltip) {
-        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.tooltip.soulgem"));
-        tooltip.accept(Text.translatable("item.katanamod.diamond_katana.tooltip.element"));
-    }
 }

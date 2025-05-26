@@ -3,12 +3,10 @@ package com.falanero.katanamod.client;
 import com.falanero.katanamod.ability.Ability;
 import com.falanero.katanamod.item.katana.IronKatanaItem;
 import com.falanero.katanamod.item.katana.KatanaItem;
-import com.falanero.katanamod.katana.IronKatana;
 import com.falanero.katanamod.katana.Katana;
 import com.falanero.katanamod.katana.Katanas;
 import com.falanero.katanamod.util.Souls;
 import com.falanero.katanamod.util.itemStackData.KatanamodItemStackData;
-import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
 import io.github.cottonmc.cotton.gui.client.CottonClientScreen;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
@@ -35,10 +33,6 @@ import static com.falanero.katanamod.util.Souls.getSoulsForLevel;
 import static com.falanero.katanamod.util.Souls.getSoulsNeeded;
 
 public class AbilitiesScreen extends CottonClientScreen {
-    public AbilitiesScreen(GuiDescription description) {
-        super(description);
-    }
-
 
     public AbilitiesScreen(ClientPlayerEntity player) {
         super(new KatanaModGui(player));
@@ -123,8 +117,14 @@ public class AbilitiesScreen extends CottonClientScreen {
                             abilityInfo.stackInfo.level,
                             abilityInfo.stackInfo.maxLevel)).setHorizontalAlignment(HorizontalAlignment.CENTER), abilityPanel.getWidth(), 5);
 
-                    abilityIcon.appendTooltip(Text.translatable("katanamod.katana.ability.nextLevel",abilityInfo.stackInfo.nextLevelAt).formatted(Formatting.ITALIC, Formatting.GRAY));
-                    if(abilityInfo.stackInfo.level == 0){
+                    if (abilityInfo.stackInfo.level == abilityInfo.stackInfo.maxLevel)
+                        abilityIcon.appendTooltip(Text.translatable("katanamod.katana.ability.maxLevel").formatted(Formatting.ITALIC, Formatting.GRAY));
+                    else if (abilityInfo.stackInfo.level < 1)
+                        abilityIcon.appendTooltip(Text.translatable("katanamod.katana.ability.availableAt", abilityInfo.stackInfo.nextLevelAt).formatted(Formatting.ITALIC, Formatting.GRAY));
+                    else
+                        abilityIcon.appendTooltip(Text.translatable("katanamod.katana.ability.nextLevel", abilityInfo.stackInfo.nextLevelAt).formatted(Formatting.ITALIC, Formatting.GRAY));
+
+                    if (abilityInfo.stackInfo.level == 0) {
                         abilityPanel.setBackgroundPainter(BackgroundPainter.createColorful(0x666666, 0.5f));
                         abilityIcon.setOpaqueTint(0x666666);
                     }
@@ -276,13 +276,14 @@ public class AbilitiesScreen extends CottonClientScreen {
                 if (katanaStackInfo == null) return;
 
                 stackInfo = new AbilityStackInfo(ability, katanaStackInfo);
+                if (stackInfo.level >= 1) description = ability.getDetailedDescription(stackInfo.level);
             }
 
             public AbilityPanelInfo(Ability<?> ability) {
                 this.ability = ability;
                 icon = ability.getIconTexture();
                 name = ability.getName();
-                description = ability.getDescription();
+                description = ability.getGenericDescription();
             }
         }
     }
@@ -337,7 +338,7 @@ class TooltipSprite extends WSprite {
 
 
         tooltip.add(Language.getInstance()
-                .reorder(wrapDescription(Texts.setStyleIfAbsent(lines.copy(), Style.EMPTY.withColor(Formatting.WHITE)), 140)).toArray(new OrderedText[0]));
+                .reorder(wrapDescription(Texts.setStyleIfAbsent(lines.copy(), Style.EMPTY.withColor(Formatting.WHITE)), 150)).toArray(new OrderedText[0]));
     }
 }
 

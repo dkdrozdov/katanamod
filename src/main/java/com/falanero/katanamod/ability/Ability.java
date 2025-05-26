@@ -1,6 +1,5 @@
 package com.falanero.katanamod.ability;
 
-import com.falanero.katanamod.item.katana.KatanaItem;
 import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -22,7 +21,8 @@ public abstract class Ability<EventCallback> {
 
     public abstract Text getName();
 
-    public abstract Text getDescription();
+    public abstract Text getGenericDescription();
+    public abstract Text getDetailedDescription(int abilityLevel);
 
     public int getAbilityLevel(int katanaLevel) {
         return arithmeticProgression(getStartingLevel(), getIncrementLevel(), getMaxLevel(), katanaLevel);
