@@ -3,6 +3,7 @@ package com.falanero.katanamod;
 import com.falanero.katanamod.component.Components;
 import com.falanero.katanamod.item.Items;
 import com.falanero.katanamod.util.CombatLogger;
+import com.falanero.katanamod.command.Commands;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -86,21 +87,8 @@ public class KatanaMod implements ModInitializer {
         Items.initialize();
 //        Entities.register();
         Components.initialize();
+        Commands.register();
 
-//        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-//            dispatcher.register(
-//                    literal("testitem")
-//                            .executes(context -> {
-//                                ItemStack stack = new ItemStack(net.minecraft.item.Items.ACACIA_BOAT);
-//stack.set(DataComponentTypes.)
-//                                if (context.getSource().getPlayer() instanceof PlayerEntity playerEntity) {
-//                                    playerEntity.getInventory().insertStack(stack);
-//                                    return 1;
-//                                }
-//                                return 0;
-//                            })
-//            );
-//        });
         KatanaMod.LOGGER.info("katanamod initialized");
     }
 }
