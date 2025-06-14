@@ -4,10 +4,15 @@
   "package": "com.falanero.katanamod.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AbstractBlockMixin",
+    "BlockCollisionSpliteratorMixin",
+    "EntityMixin",
     "LivingEntityMixin",
-    "PlayerEntityMixin"
+    "PlayerEntityMixin",
+    "ServerPlayerEntityMixin"
   ],
   "client": [
+    "BlockViewMixin"
   ],
   "server": [
   ],

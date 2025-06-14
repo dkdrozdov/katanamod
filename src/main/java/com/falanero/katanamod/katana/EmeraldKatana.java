@@ -14,36 +14,47 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class IronKatana implements Katana {
+public class EmeraldKatana implements Katana {
 
     @Override
     public @NotNull Map<Predicate<Item>, ConsumableAbility> getConsumableAbilities() {
-        return Collections.emptyMap();
+        return Map.of(
+                (item) -> true, (world, user, hand, level) -> {
+                    return false;
+                }
+
+        );
     }
 
     @Override
     public @NotNull List<AttackAbility> getOnSweepAttackAbilities() {
-        return Collections.emptyList();
+        return List.of((stack, target, attacker, level) -> {
+        });
     }
 
     @Override
     public @NotNull List<AttackAbility> getOnCritAttackAbilities() {
-        return Collections.emptyList();
+        return List.of((stack, target, attacker, level) -> {
+        });
     }
 
     @Override
     public @NotNull List<AttackAbility> getOnSprintAttackAbilities() {
-        return Collections.emptyList();
+        return List.of((stack, target, attacker, level) -> {
+        });
     }
 
     @Override
     public @NotNull List<AttackAbility> getPostAttackAbilities() {
-        return Collections.emptyList();
+        return List.of((stack, target, attacker, itemLevel) -> {
+                }
+        );
     }
 
     @Override
     public @NotNull List<TickAbility> getTickAbilities() {
-        return Collections.emptyList();
+        return List.of(
+        );
     }
 
     @Override
@@ -52,27 +63,32 @@ public class IronKatana implements Katana {
     }
 
     @Override
-    public Identifier getIconTexture() {
-        return Identifier.of(KatanaMod.MOD_ID, "textures/item/iron_katana.png");
-    }
-
-    @Override
     public KatanaItem getItem() {
-        return (KatanaItem) Items.IRON_KATANA;
+        return (KatanaItem) Items.EMERALD_KATANA;
     }
 
     @Override
     public Text getDescription() {
-        return Text.translatable("katanamod.katana.iron_katana.description");
+        return Text.translatable("katanamod.katana.emerald_katana.description");
     }
 
     @Override
     public Text getName() {
-        return Text.translatable("katanamod.katana.iron_katana.name");
+        return Text.translatable("katanamod.katana.emerald_katana.name");
     }
 
     @Override
+    public Identifier getIconTexture() {
+        return Identifier.of(KatanaMod.MOD_ID, "textures/item/emerald_katana.png");
+    }
+
+    private static final List<Ability<?>> abilities = List.of(
+            Abilities.BUSHWALK_EMERALD_ABILITY,
+            Abilities.MELD_EMERALD_ABILITY
+    );
+
+    @Override
     public List<Ability<?>> getAbilities() {
-        return Collections.emptyList();
+        return abilities;
     }
 }

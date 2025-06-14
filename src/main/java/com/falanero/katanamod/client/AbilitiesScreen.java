@@ -167,10 +167,7 @@ public class AbilitiesScreen extends CottonClientScreen {
             WTabPanel root = new WTabPanel();
             setRootPanel(root);
 
-            List<Katana> katanas = List.of(
-                    Katanas.IRON_KATANA,
-                    Katanas.DIAMOND_KATANA
-            );
+            List<Katana> katanas = Katanas.katanas;
 
             int i = 0;
             for (var k : katanas) {

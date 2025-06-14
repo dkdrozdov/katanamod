@@ -3,6 +3,7 @@ package com.falanero.katanamod.item;
 import com.falanero.katanamod.KatanaMod;
 import com.falanero.katanamod.component.Components;
 import com.falanero.katanamod.item.katana.DiamondKatanaItem;
+import com.falanero.katanamod.item.katana.EmeraldKatanaItem;
 import com.falanero.katanamod.item.katana.IronKatanaItem;
 import com.falanero.katanamod.item.soulgem.DiamondSoulgemItem;
 import com.falanero.katanamod.katana.DiamondKatana;
@@ -49,16 +50,20 @@ public class Items {
                     .component(Components.SOUL_COUNT_COMPONENT, 0)
                     .component(Components.HIT_COUNT_COMPONENT, 0)
                     .component(DataComponentTypes.UNBREAKABLE, Unit.INSTANCE));
-    public static final Item DIAMOND_SOULGEM = registerItem("diamond_soulgem",
-            DiamondSoulgemItem::new, new Item.Settings().maxCount(1)
-                    .component(Components.SOUL_COUNT_COMPONENT, 0));
+
+    public static final Item EMERALD_KATANA = registerItem("emerald_katana",
+            settings -> new EmeraldKatanaItem(4, -2.9f, settings, Katanas.EMERALD_KATANA),
+            new Item.Settings()
+                    .component(Components.SOUL_COUNT_COMPONENT, 0)
+                    .component(Components.HIT_COUNT_COMPONENT, 0)
+                    .component(DataComponentTypes.UNBREAKABLE, Unit.INSTANCE));
 
     public static void initialize() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
                 .register((itemGroup) -> itemGroup.add(IRON_KATANA));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
                 .register((itemGroup) -> itemGroup.add(DIAMOND_KATANA));
-//        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
-//                .register((itemGroup) -> itemGroup.add(DIAMOND_SOULGEM));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
+                .register((itemGroup) -> itemGroup.add(EMERALD_KATANA));
     }
 }

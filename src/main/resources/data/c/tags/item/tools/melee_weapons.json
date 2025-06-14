@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "katanamod:iron_katana",
-    "katanamod:diamond_katana"
+    "katanamod:diamond_katana",
+    "katanamod:emerald_katana"
   ]
 }
