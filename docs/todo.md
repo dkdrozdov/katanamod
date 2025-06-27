@@ -1,14 +1,7 @@
 # After upgrading to new version
 
-## Test framework
-
-- add measurement tools such as spawnable dummy with damage indication.
-- add command framework to spawn items and effects easily.
-
 ## UI
 
-- add  description framework, decouple it from minecraft tooltip system.
-- add mod screen instead of tooltips, make tooltips more concise.
 - employ a sound&particle framework.
 
 ## Configuration

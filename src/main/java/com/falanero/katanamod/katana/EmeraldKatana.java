@@ -84,7 +84,8 @@ public class EmeraldKatana implements Katana {
 
     private static final List<Ability<?>> abilities = List.of(
             Abilities.BUSHWALK_EMERALD_ABILITY,
-            Abilities.MELD_EMERALD_ABILITY
+            Abilities.MELD_EMERALD_ABILITY,
+            Abilities.COALESCENCE_EMERALD_ABILITY
     );
 
     @Override

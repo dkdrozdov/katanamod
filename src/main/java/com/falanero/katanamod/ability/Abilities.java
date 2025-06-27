@@ -6,6 +6,7 @@ import com.falanero.katanamod.ability.diamond.attack.SkyboundDiamondAbility;
 import com.falanero.katanamod.ability.diamond.tick.SpringDiamondAbility;
 import com.falanero.katanamod.ability.diamond.tick.SwiftnessDiamondAbility;
 import com.falanero.katanamod.ability.emerald.BushwalkEmeraldAbility;
+import com.falanero.katanamod.ability.emerald.CoalescenceEmeraldAbility;
 import com.falanero.katanamod.ability.emerald.MeldEmeraldAbility;
 
 public class Abilities {
@@ -17,5 +18,6 @@ public class Abilities {
 
     public static final Ability<?> BUSHWALK_EMERALD_ABILITY = new BushwalkEmeraldAbility();
     public static final Ability<?> MELD_EMERALD_ABILITY = new MeldEmeraldAbility();
+    public static final Ability<?> COALESCENCE_EMERALD_ABILITY = new CoalescenceEmeraldAbility();
 
 }

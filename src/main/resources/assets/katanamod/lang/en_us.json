@@ -44,5 +44,8 @@
   "katanamod.ability.emerald.bushwalk.description.detailed": "Makes leaves passable.",
   "katanamod.ability.emerald.meld.name": "Meld",
   "katanamod.ability.emerald.meld.description.generic": "Gives invisibility when inside leaves.",
-  "katanamod.ability.emerald.meld.description.detailed": "Gain invisibility when inside leaves."
+  "katanamod.ability.emerald.meld.description.detailed": "Gain invisibility when inside leaves.",
+  "katanamod.ability.emerald.coalescence.description.generic": "Gives regeneration when near grass.",
+  "katanamod.ability.emerald.coalescence.description.detailed": "Gives regeneration when near grass.",
+  "katanamod.ability.emerald.coalescence.name": "Coalescence"
 }
